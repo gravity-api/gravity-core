@@ -3,16 +3,13 @@
  * 
  * on-line resources
  */
-using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Support.UI;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace OpenQA.Selenium.Extensions
 {
@@ -34,7 +31,7 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// Clicks and holds the mouse button down on the specified element.
         /// </summary>
-        /// <param name="element">The element on which to click and hold.</param>
+        /// <param name="element">The <see cref="IWebElement"/> on which to click and hold.</param>
         /// <returns>A self-reference to this <see cref="Interactions.Actions" />.</returns>
         public static Actions ClickAndHold(this IWebElement element)
         {
@@ -52,7 +49,7 @@ namespace OpenQA.Selenium.Extensions
         /// Provides a convenience method for manipulating selections of options in an HTML
         /// select element.
         /// </summary>
-        /// <param name="element">The web element from which to create <see cref="SelectElement" />.</param>
+        /// <param name="element">The <see cref="IWebElement"/> from which to create <see cref="SelectElement" />.</param>
         /// <returns>New instance of <see cref="SelectElement" />.</returns>
         /// <exception cref="UnexpectedTagNameException">Thrown when the element wrapped is not a <select> element.</exception>
         public static SelectElement AsComboBox(this IWebElement element)
@@ -63,7 +60,7 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// Right-click the mouse at the last known mouse coordinates.
         /// </summary>
-        /// <param name="element">The element on which to click.</param>
+        /// <param name="element">The <see cref="IWebElement"/> on which to click.</param>
         /// <returns>A self-reference to this <see cref="Interactions.Actions" />.</returns>
         public static Actions ContextClick(this IWebElement element)
         {
@@ -80,7 +77,7 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// Double-clicks the mouse on the specified element.
         /// </summary>
-        /// <param name="element">The element on which to double-click.</param>
+        /// <param name="element">The <see cref="IWebElement"/> on which to double-click.</param>
         /// <returns>A self-reference to this <see cref="Actions" />.</returns>
         public static Actions DoubleClick(this IWebElement element)
         {
@@ -98,7 +95,7 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// Download a resource based on the given <see cref="IWebElement" />.
         /// </summary>
-        /// <param name="element">The element to use when downloading a resource.</param>
+        /// <param name="element">The <see cref="IWebElement" /> to use when downloading a resource.</param>
         /// <param name="path">The path on which the resource will be saved.</param>
         /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
         public static IWebElement DownloadResource(this IWebElement element, string path)
@@ -109,7 +106,7 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// Download a resource based on the given <see cref="IWebElement" />.
         /// </summary>
-        /// <param name="element">The element to use when downloading a resource.</param>
+        /// <param name="element">The <see cref="IWebElement" /> to use when downloading a resource.</param>
         /// <param name="path">The path on which the resource will be saved.</param>
         /// <param name="attribute">The element attribute from which to extract resource URL (if needed).</param>
         /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
@@ -146,6 +143,137 @@ namespace OpenQA.Selenium.Extensions
 
                 // write the file
                 File.WriteAllBytes(path, httpResponseMessage.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult());
+            }
+
+            // keep the fluent
+            return element;
+        }
+        #endregion
+
+        /// <summary>
+        /// Get the element's HTML and all it's content, including the start tag, it's attributes, and the end tag.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> from which to get the outer HTML.</param>
+        /// <returns>The HTML element and all it's content, including the start tag, it's attributes, and the end tag.</returns>
+        public static string GetSource(this IWebElement element)
+        {
+            // extract the driver to which the current element belongs to
+            var driver = (IJavaScriptExecutor)(IWrapsDriver)element;
+
+            // get this element outer HTML
+            return driver.ExecuteScript("return arguments[0].outerHTML;", element) as string;
+        }
+
+        #region *** Move to Element   ***
+        /// <summary>
+        /// Moves the mouse to the specified offset of the top-left corner of the specified element.
+        /// </summary>
+        /// <param name="toElement">The <see cref="IWebElement"/> to which to move the mouse.</param>
+        /// <param name="offsetX">The horizontal offset to which to move the mouse.</param>
+        /// <param name="offsetY">The vertical offset to which to move the mouse.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        public static IWebElement MoveToElement(this IWebElement toElement, int offsetX, int offsetY)
+        {
+            // setup
+            var actions = new Actions(((IWrapsDriver)toElement).WrappedDriver);
+
+            // execute actions
+            actions.MoveToElement(toElement, offsetX, offsetY).Build().Perform();
+
+            // keep the fluent
+            return toElement;
+        }
+
+        /// <summary>
+        /// <summary>
+        /// Moves the mouse to the specified offset of the top-left corner of the specified element.
+        /// </summary>
+        /// <param name="toElement">The <see cref="IWebElement"/> to which to move the mouse.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        public static IWebElement MoveToElement(this IWebElement toElement)
+        {
+            // setup
+            var actions = new Actions(((IWrapsDriver)toElement).WrappedDriver);
+
+            // execute actions
+            actions.MoveToElement(toElement).Build().Perform();
+
+            // keep the fluent
+            return toElement;
+        }
+        #endregion
+
+        #region *** Delayed Send Keys ***
+        /// <summary>
+        /// Sends keys to a given Text-Container object with delay between keys. Used
+        /// for slow typing in order to trigger JS events.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        public static IWebElement DelayedSendKeys(this IWebElement element, string text)
+        {
+            return DoDelayedSendKeys(element, text, 100, false);
+        }
+
+        /// <summary>
+        /// Sends keys to a given Text-Container object with delay between keys. Used
+        /// for slow typing in order to trigger JS events.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        public static IWebElement DelayedSendKeys(this IWebElement element, string text, bool clear)
+        {
+            return DoDelayedSendKeys(element, text, 100, clear);
+        }
+
+        /// <summary>
+        /// Sends keys to a given Text-Container object with delay between keys. Used
+        /// for slow typing in order to trigger JS events.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="delay">The delay time between each key.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        public static IWebElement DelayedSendKeys(this IWebElement element, string text, int delay)
+        {
+            return DoDelayedSendKeys(element, text, delay, false);
+        }
+
+        /// <summary>
+        /// Sends keys to a given Text-Container object with delay between keys. Used
+        /// for slow typing in order to trigger JS events.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="delay">The delay time between each key.</param>
+        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        public static IWebElement DelayedSendKeys(this IWebElement element, string text, int delay, bool clear)
+        {
+            return DoDelayedSendKeys(element, text, delay, clear);
+        }
+
+        // execute action routine
+        private static IWebElement DoDelayedSendKeys(IWebElement element, string text, int delay, bool clear)
+        {
+            // clear conditions
+            if (clear)
+            {
+                element.Clear();
+            }
+
+            // iterate keys
+            for (int i = 0; i < text.Length; i++)
+            {
+                element.SendKeys($"{text[i]}");
+                Thread.Sleep(delay);
             }
 
             // keep the fluent

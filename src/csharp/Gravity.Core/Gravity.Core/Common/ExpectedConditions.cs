@@ -7,6 +7,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OpenQA.Selenium.Common
 {
@@ -152,6 +153,78 @@ namespace OpenQA.Selenium.Common
             catch (Exception e) when (e is StaleElementReferenceException)
             {
                 return null;
+            }
+        };
+
+        /// <summary>
+        /// An expectation for checking that an element is either invisible or not present on the DOM.
+        /// </summary>
+        /// <param name="locator">The locator used to find the element.</param>
+        /// <returns><see cref="true"/> if the element is not displayed; otherwise, <see cref="false"/>.</returns>
+        public static Func<IWebDriver, bool> InvisibilityOfElementLocated(By locator) => (driver) =>
+        {
+            try
+            {
+                var element = driver.FindElement(locator);
+                return !element.Displayed;
+            }
+            catch (Exception e) when (e is NoSuchElementException || e is StaleElementReferenceException)
+            {
+                // returns true because the element is not present in DOM. The
+                // try block checks if the element is present but is invisible.
+                return true;
+            }
+        };
+
+        /// <summary>
+        /// An expectation for checking if an element is visible and enabled such that you can click it.
+        /// </summary>
+        /// <param name="locator">The locator used to find the element.</param>
+        /// <returns>The <see cref="IWebElement"/> once it is located and click-able (visible and enabled).</returns>
+        public static Func<IWebDriver, IWebElement> ElementToBeClickable(By locator) => (driver) =>
+        {
+            try
+            {
+                var element = ElementIfVisible(driver.FindElement(locator));
+
+                // exit conditions
+                if (element == null)
+                {
+                    return null;
+                }
+
+                // expected conditions
+                return (element.Enabled) ? element : null;
+            }
+            catch (Exception e) when (e is StaleElementReferenceException)
+            {
+                return null;
+            }
+        };
+
+        /// <summary>
+        /// An expectation for the URL of the current page to be a specific URL.
+        /// </summary>
+        /// <param name="regex">The regular expression that the URL should match.</param>
+        /// <returns><see cref="true"/> if the URL matches the specified regular expression; otherwise, <see cref="false"/>.</returns>
+        public static Func<IWebDriver, bool> UrlMatches(string regex)
+            => (driver) => Regex.IsMatch(driver.Url, regex, RegexOptions.IgnoreCase);
+
+        /// <summary>
+        /// An expectation for checking that all elements are either invisible or not present on the DOM.
+        /// </summary>
+        /// <param name="locator">The locator used to find the elements.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static Func<IWebDriver, IWebDriver> InvisibilityOfAllElementsLocatedBy(By locator) => (driver) =>
+        {
+            try
+            {
+                var elements = driver.FindElements(locator);
+                return elements.Any(element => element.Displayed) ? null : driver;
+            }
+            catch (Exception e) when (e is NoSuchElementException || e is StaleElementReferenceException)
+            {
+                return driver;
             }
         };
 

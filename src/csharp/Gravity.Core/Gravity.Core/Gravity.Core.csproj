@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RootNamespace>OpenQA.Selenium</RootNamespace>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

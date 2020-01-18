@@ -3,10 +3,13 @@
  * 
  * on-line resources
  */
+using OpenQA.Selenium.Common;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +20,10 @@ namespace OpenQA.Selenium.Extensions
     /// </summary>
     public static class WebDriverExtensions
     {
-        #region *** Click Listener ***
+        // members: constants
+        private const string NoByMessage = "{0} is null. You must provide 'By' condition to find the element.";
+
+        #region *** Click Listener    ***
         /// <summary>
         /// An <see cref="IWebDriver"/> extension method that listens to elements using the provided <see cref="By"/>
         /// mechanism. When found, the listener will <see cref="IWebElement.Click()"/> on all elements.
@@ -162,6 +168,524 @@ namespace OpenQA.Selenium.Extensions
 
             // keep the fluent
             return driver;
+        }
+
+        #region *** Displayed Element ***
+        /// <summary>
+        /// Finds the first visible <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        public static IWebElement GetDisplayedElement(this IWebDriver driver, By by)
+        {
+            return DoGetDisplayedElement(driver, by, timeout: TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds the first visible <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        public static IWebElement GetDisplayedElement(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetDisplayedElement(driver, by, timeout);
+        }
+
+        /// <summary>
+        /// Finds all visible <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        public static IEnumerable<IWebElement> GetDisplayedElements(this IWebDriver driver, By by)
+        {
+            return DoGetDisplayedElements(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds all visible <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        public static IEnumerable<IWebElement> GetDisplayedElements(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetDisplayedElements(driver, by, timeout);
+        }
+
+        // execute action routine
+        private static IWebElement DoGetDisplayedElement(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // wait for elements
+            var elements = Get(driver, by, timeout);
+
+            // return the displayed element
+            return elements.FirstOrDefault(e => e.Displayed) ?? throw new ElementNotVisibleException();
+        }
+
+        private static IEnumerable<IWebElement> DoGetDisplayedElements(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // wait for elements
+            var elements = Get(driver, by, timeout);
+
+            // return the displayed element
+            return elements.Where(e => e.Displayed) ?? Array.Empty<IWebElement>();
+        }
+        #endregion
+
+        #region *** Exists Element    ***
+        /// <summary>
+        /// Finds the first exists <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        public static IWebElement GetElement(this IWebDriver driver, By by)
+        {
+            return DoGetElement(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds the first exists <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        public static IWebElement GetElement(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetElement(driver, by, timeout);
+        }
+
+        /// <summary>
+        /// Finds all exists <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        public static IEnumerable<IWebElement> GetElements(this IWebDriver driver, By by)
+        {
+            return Get(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds all exists <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
+        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        public static IEnumerable<IWebElement> GetElements(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return Get(driver, by, timeout);
+        }
+
+        // execute action routine
+        private static IWebElement DoGetElement(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // wait for elements
+            var elements = Get(driver, by, timeout);
+
+            // return the displayed element
+            return elements.FirstOrDefault() ?? throw new NoSuchElementException();
+        }
+        #endregion
+
+        /// <summary>
+        /// Gets the current windows handle, if not implemented or not possible,
+        /// returns <see cref="SessionId"/> or new <see cref="SessionId"/> if <see cref="IHasSessionId"/> is not implemented.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <returns>Opaque handle to this window that uniquely identifies it within this driver instance.</returns>
+        public static string GetCurrentHandle(this IWebDriver driver)
+        {
+            try
+            {
+                return driver.CurrentWindowHandle;
+            }
+            catch (Exception e) when (e is WebDriverException || e is NullReferenceException)
+            {
+                if (driver is IHasSessionId id)
+                {
+                    return id.ToString();
+                }
+            }
+            return new SessionId($"gravity-{Guid.NewGuid()}").ToString();
+        }
+
+        #region *** Screenshot        ***
+        /// <summary>
+        /// Saves the screenshot to a file, overwriting the file if it already exists.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="fileName">The full path and file name to save the screenshot to.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver GetScreenshot(this IWebDriver driver, string fileName)
+        {
+            // normalize path
+            fileName = fileName.TrimEnd('\\');
+
+            // get image extension
+            var extension = Path.GetExtension(fileName).Replace(".", string.Empty).ToUpper();
+
+            // set format default
+            var format = GetFormat(extension);
+
+            // take screen-shot
+            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(fileName, format);
+
+            // keep the fluent
+            return driver;
+        }
+
+        // gets the format enumerator based on file extension
+        private static ScreenshotImageFormat GetFormat(string extension) => extension switch
+        {
+            "BMP" => ScreenshotImageFormat.Bmp,
+            "GIF" => ScreenshotImageFormat.Gif,
+            "JPEG" => ScreenshotImageFormat.Jpeg,
+            "TIFF" => ScreenshotImageFormat.Tiff,
+            _ => ScreenshotImageFormat.Png,
+        };
+        #endregion
+
+        /// <summary>
+        /// Gets this <see cref="IWebDriver"/> instance <see cref="SessionId"/>. If there is no
+        /// <see cref="SessionId"/> for this driver, a new one will be created.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <returns>Opaque handle to this window that uniquely identifies it within this driver instance.</returns>
+        public static SessionId GetSession(this IWebDriver driver)
+        {
+            if (driver is IHasSessionId id)
+            {
+                return id.SessionId;
+            }
+            return new SessionId($"gravity-{Guid.NewGuid()}");
+        }
+
+        /// <summary>
+        /// Determines whether this <see cref="IWebDriver"/> instance has alert.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <returns><see cref="true"/> if the specified driver has alert; otherwise, <see cref="false"/>.</returns>
+        public static bool HasAlert(this IWebDriver driver)
+        {
+            try
+            {
+                driver.SwitchTo().Alert();
+                return true;
+            }
+            catch (Exception e) when (e != null)
+            {
+                return false;
+            }
+        }
+
+        #region *** Navigate to URL   ***
+        /// <summary>
+        /// Calling the <see cref="NavigateToUrl(IWebDriver, string)"/> method will load a new web page
+        /// in the current browser window. This is done using an HTTP GET operation, and the method
+        /// will block until the load is complete.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="url">The URL to load. It is best to use a fully qualified URL.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver NavigateToUrl(this IWebDriver driver, string url)
+        {
+            return DoNavigateToUrl(driver, url, TimeSpan.FromSeconds(60));
+        }
+
+        /// <summary>
+        /// Calling the <see cref="NavigateToUrl(IWebDriver, string, TimeSpan)"/> method will load a new web page
+        /// in the current browser window. This is done using an HTTP GET operation, and the method
+        /// will block until the load is complete.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="url">The URL to load. It is best to use a fully qualified URL.</param>
+        /// <param name="timeout"></param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver NavigateToUrl(this IWebDriver driver, string url, TimeSpan timeout)
+        {
+            return DoNavigateToUrl(driver, url, timeout);
+        }
+
+        // execute action routine
+        private static IWebDriver DoNavigateToUrl(this IWebDriver driver, string url, TimeSpan timeout)
+        {
+            try
+            {
+                // set timeout
+                driver.Manage().Timeouts().PageLoad = timeout;
+
+                // navigate to URL
+                driver.Url = url;
+
+                // mobile OS handler; invalid maximize action
+                if (IsMobileDriver(driver))
+                {
+                    return driver;
+                }
+
+                // maximize the window - this will verify page is fully loaded (sync only)
+                var isMax = (bool)((IJavaScriptExecutor)driver).ExecuteScript("return screen.availWidth - window.innerWidth === 0;");
+                if (!isMax)
+                {
+                    driver.Manage().Window.Maximize();
+                }
+
+                // keep the fluent
+                return driver;
+            }
+            catch (Exception)
+            {
+                driver?.Close();
+                driver?.Dispose();
+                throw;
+            }
+        }
+
+        private static bool IsMobileDriver(IWebDriver driver)
+        {
+            // get base web-driver
+            if (!(driver is RemoteWebDriver remoteWebDriver))
+            {
+                return false;
+            }
+
+            // check if capability exists
+            if (!remoteWebDriver.Capabilities.HasCapability(CapabilityType.PlatformName))
+            {
+                return false;
+            }
+
+            // check capabilities
+            if (!(remoteWebDriver.Capabilities[CapabilityType.PlatformName] is string platformName))
+            {
+                return false;
+            }
+
+            // normalize
+            platformName = platformName.ToUpper();
+
+            // assert if mobile
+            return platformName == "IOS" || platformName == "ANDROID" || platformName == "FIREFOXOS";
+        }
+        #endregion
+
+        /// <summary>
+        /// Scrolls the current browser window by the given scroll amount.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="scrollLength">Length of the scroll.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver ScrollBrowserWindow(this IWebDriver driver, int scrollLength)
+        {
+            // scroll browser-window
+            ((IJavaScriptExecutor)driver).ExecuteScript($"window.scroll(0, {scrollLength});");
+
+            // keep the fluent
+            return driver;
+        }
+
+        #region *** Persistent Click  ***
+        /// <summary>
+        /// Persistently attempts to find and click on the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentClick(this IWebDriver driver, By by)
+        {
+            return DoPersistentClick(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Persistently attempts to find and click on the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentClick(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoPersistentClick(driver, by, timeout);
+        }
+
+        // execute action routine
+        private static IWebDriver DoPersistentClick(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // initialize web-driver waiter
+            var webDriverWait = new WebDriverWait(driver, timeout);
+
+            // persist click
+            return webDriverWait.Until(d =>
+            {
+                try
+                {
+                    d.FindElement(by).Click();
+                }
+                catch (Exception e) when (e != null && !(e is StaleElementReferenceException))
+                {
+                    return null;
+                }
+                return d;
+            });
+        }
+        #endregion
+
+        #region *** Persistent Keys   ***
+        /// <summary>
+        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentSendKeys(this IWebDriver driver, By by, string text, bool clear)
+        {
+            return DoPersistentSendKeys(driver, by, text, clear, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentSendKeys(this IWebDriver driver, By by, string text, bool clear, TimeSpan timeout)
+        {
+            return DoPersistentSendKeys(driver, by, text, clear, timeout);
+        }
+
+        /// <summary>
+        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentSendKeys(this IWebDriver driver, By by, string text)
+        {
+            return DoPersistentSendKeys(driver, by, text, false, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// or until no exceptions has been thrown.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="text">The keys to send.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver PersistentSendKeys(this IWebDriver driver, By by, string text, TimeSpan timeout)
+        {
+            return DoPersistentSendKeys(driver, by, text, false, timeout);
+        }
+
+        // execute action routine
+        private static IWebDriver DoPersistentSendKeys(IWebDriver driver, By by, string text, bool clear, TimeSpan timeout)
+        {
+            // initialize web-driver waiter
+            var webDriverWait = new WebDriverWait(driver, timeout);
+
+            // persist click
+            return webDriverWait.Until(d =>
+            {
+                try
+                {
+                    var element = d.FindElement(by);
+                    if (clear)
+                    {
+                        element.Clear();
+                    }
+                    element.SendKeys(text);
+                }
+                catch (Exception e) when (e != null && !(e is StaleElementReferenceException))
+                {
+                    return null;
+                }
+                return d;
+            });
+        }
+        #endregion
+
+        // Utilities
+        // gets exists elements from the DOM
+        private static IEnumerable<IWebElement> Get(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // exit condition
+            if (by == null)
+            {
+                throw new ArgumentException(string.Format(NoByMessage, nameof(by)));
+            }
+
+            // wait for elements - replace with code
+            var elements = ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d =>
+                {
+                    try
+                    {
+                        var e = d.FindElements(by);
+                        return e.Count > 0 ? e : null;
+                    }
+                    catch (Exception e) when (e is StaleElementReferenceException)
+                    {
+                        return null;
+                    }
+                });
+
+            // if no elements
+            return elements.Count == 0 ? throw new NoSuchElementException() : elements;
         }
     }
 }
