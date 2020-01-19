@@ -6,6 +6,7 @@
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Support.UI;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -150,19 +151,48 @@ namespace OpenQA.Selenium.Extensions
         }
         #endregion
 
+        #region *** Java Script Get   ***
         /// <summary>
         /// Get the element's HTML and all it's content, including the start tag, it's attributes, and the end tag.
         /// </summary>
         /// <param name="element">The <see cref="IWebElement"/> from which to get the outer HTML.</param>
         /// <returns>The HTML element and all it's content, including the start tag, it's attributes, and the end tag.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
         public static string GetSource(this IWebElement element)
         {
-            // extract the driver to which the current element belongs to
-            var driver = (IJavaScriptExecutor)(IWrapsDriver)element;
-
-            // get this element outer HTML
-            return driver.ExecuteScript("return arguments[0].outerHTML;", element) as string;
+            return DoJavaScriptGet(element, "return arguments[0].outerHTML;");
         }
+
+        /// <summary>
+        /// Gets the value property of the value attribute of a text field.
+        /// </summary>
+        /// <param name="element">The <see cref="IWebElement"/> from which to get the outer HTML.</param>
+        /// <returns>The value property of the value attribute of a text field.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static string GetValue(this IWebElement element)
+        {
+            return DoJavaScriptGet(element, "return arguments[0].value;");
+        }
+
+        // execute action routine
+        private static string DoJavaScriptGet(IWebElement element, string script)
+        {
+            try
+            {
+                // extract driver
+                var driver = (IJavaScriptExecutor)(IWrapsDriver)element;
+
+                // clear the element
+                var result = driver.ExecuteScript(script, element) as string;
+                return string.IsNullOrEmpty(result) ? string.Empty : result;
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore exceptions
+            }
+            return string.Empty;
+        }
+        #endregion
 
         #region *** Move to Element   ***
         /// <summary>
@@ -278,6 +308,140 @@ namespace OpenQA.Selenium.Extensions
 
             // keep the fluent
             return element;
+        }
+        #endregion
+
+        #region *** Java Script       ***
+        /// <summary>
+        /// Attempts to clear the given data from the text container. This method will not throw an exception.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptClear(this IWebElement element)
+        {
+            return DoJavaScriptOnElement(element, "arguments[0].value='';");
+        }
+
+        /// <summary>
+        /// Attempts to click on the given element. Use when element cannot be clicked otherwise.
+        /// This method will not throw an exception.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptClick(this IWebElement element)
+        {
+            return DoJavaScriptOnElement(element, "arguments[0].click();");
+        }
+
+        /// <summary>
+        /// The <see cref="JavaScriptFocus(IWebElement)"/> method is used to give focus to an element (if it can be focused).
+        /// This method will not throw an exception.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptFocus(this IWebElement element)
+        {
+            return DoJavaScriptOnElement(element, "arguments[0].focus();");
+        }
+
+        /// <summary>
+        /// The <see cref="JavaScriptBlur(IWebElement)"/> method is used to remove focus from an element.
+        /// This method will not throw an exception.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptBlur(this IWebElement element)
+        {
+            return DoJavaScriptOnElement(element, "arguments[0].blur();");
+        }
+
+        /// <summary>
+        /// The <see cref="JavaScriptScrollTop(IWebElement, int)"/> property sets the number of pixels 
+        /// an element's content is scrolled vertically.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <param name="scrollTop">The number of pixels an element's content is scrolled vertically.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptScrollTop(this IWebElement element, int scrollTop)
+        {
+            return DoJavaScriptOnElement(element, $"arguments[0].scrollTop={scrollTop}");
+        }
+
+        /// <summary>
+        /// The <see cref="JavaScriptScrollLeft(IWebElement, int)"/> property sets the number of pixels 
+        /// an element's content is scrolled horizontally.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <param name="scrollLeft">The number of pixels an element's content is scrolled horizontally.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        /// <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        public static IWebElement JavaScriptScrollLeft(this IWebElement element, int scrollLeft)
+        {
+            return DoJavaScriptOnElement(element, $"arguments[0].scrollLeft={scrollLeft}");
+        }
+
+        // executes action routine
+        private static IWebElement DoJavaScriptOnElement(IWebElement element, string script)
+        {
+            try
+            {
+                // extract driver
+                var driver = (IJavaScriptExecutor)(IWrapsDriver)element;
+
+                // clear the element
+                driver.ExecuteScript(script, element);
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore exceptions
+            }
+            return element;
+        }
+        #endregion
+
+        #region *** Upload File       ***
+        /// <summary>
+        /// Allows to set input of file type element with file to upload (bypass all native windows).
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
+        /// <param name="path">The file to upload.</param>
+        /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
+        public static IWebElement UploadFile(this IWebElement element, string path)
+        {
+            if (!IsFileInput(element))
+            {
+                throw new ArgumentException
+                    ($"The element <{element.TagName}></{element.TagName}> is not of type '<input type=\"file\"></input>'.", nameof(element));
+            }
+
+            // execute script
+            const string script = "arguments[0].setAttribute('style','visibility: visible; display: block;');";
+            ((IJavaScriptExecutor)(IWrapsDriver)element).ExecuteScript(script, element);
+
+            // send key to trigger files upload
+            element.SendKeys(path);
+
+            // keep the fluent
+            return element;
+        }
+
+        // validate if the current element is valid input-file element
+        private static bool IsFileInput(IWebElement element)
+        {
+            // constants
+            const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
+
+            // setup conditions
+            var isValidTag = element.TagName.Equals("input", Compare);
+            var isValidTyp = element.GetAttribute("type").Equals("file", Compare);
+
+            // exit condition
+            return isValidTag && isValidTyp;
         }
         #endregion
 

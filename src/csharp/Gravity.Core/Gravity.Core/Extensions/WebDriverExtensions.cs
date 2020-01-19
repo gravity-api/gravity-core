@@ -20,9 +20,6 @@ namespace OpenQA.Selenium.Extensions
     /// </summary>
     public static class WebDriverExtensions
     {
-        // members: constants
-        private const string NoByMessage = "{0} is null. You must provide 'By' condition to find the element.";
-
         #region *** Click Listener    ***
         /// <summary>
         /// An <see cref="IWebDriver"/> extension method that listens to elements using the provided <see cref="By"/>
@@ -765,12 +762,6 @@ namespace OpenQA.Selenium.Extensions
         // gets exists elements from the DOM
         private static IEnumerable<IWebElement> Get(IWebDriver driver, By by, TimeSpan timeout)
         {
-            // exit condition
-            if (by == null)
-            {
-                throw new ArgumentException(string.Format(NoByMessage, nameof(by)));
-            }
-
             // wait for elements - replace with code
             var elements = ExtensionsUtilities
                 .WebDriverWait(driver, timeout)
