@@ -740,6 +740,27 @@ namespace OpenQA.Selenium.Extensions
         }
         #endregion
 
+        /// <summary>
+        /// Switches the focus of future commands for this driver to the window with the given index.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="index">The window index.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver SwitchToWindow(this IWebDriver driver, int index)
+        {
+            // exit condition
+            if (driver.WindowHandles.Count == 0)
+            {
+                return driver;
+            }
+
+            // switch to the given window (by index)
+            driver.SwitchTo().Window(driver.WindowHandles[index]);
+
+            // keep the fluent
+            return driver;
+        }
+
         // Utilities
         // gets exists elements from the DOM
         private static IEnumerable<IWebElement> Get(IWebDriver driver, By by, TimeSpan timeout)
