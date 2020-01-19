@@ -1,14 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <RootNamespace>OpenQA.Selenium</RootNamespace>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <PackageId>Gravity.Core</PackageId>
+    <Title>Gravity Core - Selenium Extension Package</Title>
+    <Description>Extension package for Selenium API. Adds advanced and complicated Selenium actions into Selenium API. Allows bi-directional interaction with Selenium. This package will not affect any current Selenium implementations it will only add extension methods to Selenium API.</Description>
+    <PackageTags>automation,crawling,crawl,selenium,appium,automation testing,automation test,qa,gravity,gravity api,scrapping,scrap</PackageTags>
+    <PackageProjectUrl>https://github.com/gravity-api/graivty-core</PackageProjectUrl>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Roei.Sabag;gravity.customer-services</Authors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
   </ItemGroup>
-
 </Project>
