@@ -41,3 +41,10 @@ steps:
     versioningScheme: 'byBuildNumber'
     verbosityPack: 'Diagnostic'
     packDirectory: $(Build.ArtifactStagingDirectory)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'nuget.org'
