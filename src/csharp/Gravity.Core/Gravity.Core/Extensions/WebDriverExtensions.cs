@@ -110,34 +110,34 @@ namespace OpenQA.Selenium.Extensions
         /// <summary>
         /// An <see cref="IWebDriver"/> extension method that closes all child windows of this session.
         /// </summary>
-        /// <param name="webDriver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
-        public static IWebDriver CloseAllChildWindows(this IWebDriver webDriver)
+        public static IWebDriver CloseAllChildWindows(this IWebDriver driver)
         {
             // exit conditions
-            if (webDriver.WindowHandles.Count == 1)
+            if (driver.WindowHandles.Count == 1)
             {
-                return webDriver;
+                return driver;
             }
 
             // action routine: close each > switch back to main window
-            var mainWindow = webDriver.WindowHandles[0];
+            var mainWindow = driver.WindowHandles[0];
 
-            foreach (var window in webDriver.WindowHandles)
+            foreach (var window in driver.WindowHandles)
             {
                 if (window == mainWindow)
                 {
                     continue;
                 }
-                webDriver.SwitchTo().Window(window).Close();
+                driver.SwitchTo().Window(window).Close();
                 Thread.Sleep(100);
             }
 
             // focus on main windows
-            webDriver.SwitchTo().Window(mainWindow);
+            driver.SwitchTo().Window(mainWindow);
 
             // keep the fluent
-            return webDriver;
+            return driver;
         }
 
         /// <summary>
@@ -655,6 +655,88 @@ namespace OpenQA.Selenium.Extensions
                 }
                 return d;
             });
+        }
+        #endregion
+
+        #region *** Submit Form       ***
+        /// <summary>
+        /// Submits a web form (everything under <form></form> tag).
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="id">The form identifier ('id' attribute).</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver"/>.</returns>
+        public static IWebDriver SubmitForm(this IWebDriver driver, string id)
+        {
+            // submit the form
+            ((IJavaScriptExecutor)(driver)).ExecuteScript($"document.forms['{id}'].submit();");
+
+            // keep the fluent
+            return driver;
+        }
+
+        /// <summary>
+        /// Submits a web form (everything under <form></form> tag).
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="index">Zero-based index of the form in the page DOM.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver"/>.</returns>
+        public static object SubmitForm(this IWebDriver driver, int index)
+        {
+            // submit the form
+            ((IJavaScriptExecutor)(driver)).ExecuteScript($"document.forms[{index}].submit();");
+
+            // keep the fluent
+            return driver;
+        }
+        #endregion
+
+        #region *** Switch to Frame   ***
+        /// <summary>
+        /// If the frame is available it switches the given driver to the specified frame.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="by">A mechanism by which to find elements within a document.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver SwitchToFrame(this IWebDriver driver, By by)
+        {
+            return DoSwitchToFrame(driver, by, timeout: TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// If the frame is available it switches the given driver to the specified frame.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="by">A mechanism by which to find elements within a document.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        public static IWebDriver SwitchToFrame(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoSwitchToFrame(driver, by, timeout: timeout);
+        }
+
+        // execute action routine
+        private static IWebDriver DoSwitchToFrame(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // wait and switch to frame
+            var frame = ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d =>
+                {
+                    try
+                    {
+                        var frameElement = d.FindElement(by);
+                        return d.SwitchTo().Frame(frameElement);
+                    }
+                    catch (Exception e) when (e is NoSuchFrameException)
+                    {
+                        return null;
+                    }
+                });
+
+            // keep the fluent
+            return frame ?? driver;
         }
         #endregion
 
