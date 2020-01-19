@@ -1,6 +1,6 @@
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
 
-name: $(project.package).$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+name: Gravity.Core.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 pool:
   name: Default
