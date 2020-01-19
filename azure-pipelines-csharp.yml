@@ -40,3 +40,4 @@ steps:
     packagesToPack: '**/!(*[Tt]ests)/*.csproj'
     versioningScheme: 'byBuildNumber'
     verbosityPack: 'Diagnostic'
+    packDirectory: $(Build.ArtifactStagingDirectory)
