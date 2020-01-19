@@ -42,9 +42,10 @@ steps:
     verbosityPack: 'Diagnostic'
     packDirectory: $(Build.ArtifactStagingDirectory)
 
-- task: DotNetCoreCLI@2
+- task: NuGetCommand@2
+  displayName: push package
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'nuget.org'
