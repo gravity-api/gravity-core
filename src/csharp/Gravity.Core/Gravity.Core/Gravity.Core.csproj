@@ -9,7 +9,7 @@
     <PackageTags>automation,crawling,crawl,selenium,appium,automation testing,automation test,qa,gravity,gravity api,scrapping,scrap</PackageTags>
     <PackageProjectUrl>https://github.com/gravity-api/graivty-core</PackageProjectUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Authors>Roei.Sabag;gravity.customer-services</Authors>
+    <Authors>Gravity-API Community</Authors>
   </PropertyGroup>
 
   <ItemGroup>
