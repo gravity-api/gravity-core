@@ -421,7 +421,8 @@ namespace OpenQA.Selenium.Extensions
 
             // execute script
             const string script = "arguments[0].setAttribute('style','visibility: visible; display: block;');";
-            ((IJavaScriptExecutor)(IWrapsDriver)element).ExecuteScript(script, element);
+            var onDriver = ((IWrapsDriver)element).WrappedDriver;
+            ((IJavaScriptExecutor)onDriver).ExecuteScript(script, element);
 
             // send key to trigger files upload
             element.SendKeys(path);
