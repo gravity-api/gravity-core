@@ -391,7 +391,7 @@ namespace OpenQA.Selenium.Extensions
             try
             {
                 // extract driver
-                var driver = (IJavaScriptExecutor)(IWrapsDriver)element;
+                var driver = (IJavaScriptExecutor)((IWrapsDriver)element).WrappedDriver;
 
                 // clear the element
                 driver.ExecuteScript(script, element);
