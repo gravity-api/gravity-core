@@ -145,10 +145,10 @@ namespace OpenQA.Selenium.Extensions
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
         public static IWebDriver CloseWindow(this IWebDriver driver, int index)
         {
-            // if index is out of bound, take last window
+            // if index is out of bound, take no action
             if (index > (driver.WindowHandles.Count - 1))
             {
-                index = driver.WindowHandles.Count - 1;
+                return driver;
             }
 
             // setup
