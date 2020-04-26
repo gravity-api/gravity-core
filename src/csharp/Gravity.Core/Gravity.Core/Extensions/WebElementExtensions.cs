@@ -97,7 +97,7 @@ namespace OpenQA.Selenium.Extensions
         /// </summary>
         /// <param name="element">The element.</param>
         /// <returns><see cref="true"/> if element is stale; <see cref="false"/> if not.</returns>
-        public static bool StalenessOf(this IWebElement element)
+        public static bool IsStale(this IWebElement element)
         {
             try
             {
