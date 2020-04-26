@@ -101,7 +101,7 @@ namespace OpenQA.Selenium.Extensions
         {
             try
             {
-                return element?.Enabled != true || element?.Enabled != false;
+                return !(!element.Enabled || element.Enabled);
             }
             catch (Exception e) when (e is StaleElementReferenceException)
             {
