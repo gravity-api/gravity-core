@@ -92,6 +92,23 @@ namespace OpenQA.Selenium.Extensions
             return actions;
         }
 
+        /// <summary>
+        /// Gets a value indicating if this <see cref="IWebElement"/> is stale (not attached to the DOM).
+        /// </summary>
+        /// <param name="element">The element.</param>
+        /// <returns><see cref="true"/> if element is stale; <see cref="false"/> if not.</returns>
+        public static bool StalenessOf(this IWebElement element)
+        {
+            try
+            {
+                return element?.Enabled != true || element?.Enabled != false;
+            }
+            catch (Exception e) when (e is StaleElementReferenceException)
+            {
+                return true;
+            }
+        }
+
         #region *** Download Resource ***
         /// <summary>
         /// Download a resource based on the given <see cref="IWebElement" />.
