@@ -23,7 +23,9 @@ namespace OpenQA.Selenium.Common
             var ignore = new[]
             {
                 typeof(StaleElementReferenceException),
-                typeof(NoSuchElementException)
+                typeof(NoSuchElementException),
+                typeof(WebDriverException),
+                typeof(NullReferenceException)
             };
 
             // get waiter

@@ -32,8 +32,17 @@ namespace OpenQA.Selenium.Common
         {
             try
             {
+                //! pipe: step #1 - find elements
                 var elements = driver.FindElements(by);
-                return elements.Count > 0 ? elements : null;
+
+                // exit conditions
+                if (elements.Count == 0)
+                {
+                    return null;
+                }
+
+                // complete pipe
+                return elements;
             }
             catch (Exception e) when (e is StaleElementReferenceException)
             {
@@ -76,17 +85,17 @@ namespace OpenQA.Selenium.Common
         {
             try
             {
-                // find the elements
-                var innerElements = driver.FindElements(by);
+                //! pipe: step #1 - find elements
+                var elements = driver.FindElements(by);
 
-                // retry conditions
-                if (!innerElements.All(e => e.Enabled))
+                // exit conditions
+                if (!elements.All(i => i.Enabled))
                 {
                     return null;
                 }
 
-                // return if all elements in the collection are enabled
-                return innerElements;
+                // complete pipe
+                return elements;
             }
             catch (Exception e) when (e is StaleElementReferenceException)
             {
@@ -108,6 +117,53 @@ namespace OpenQA.Selenium.Common
                 return driver.SwitchTo().Frame(frameElement);
             }
             catch (Exception e) when (e is NoSuchFrameException)
+            {
+                return null;
+            }
+        };
+
+        /// <summary>
+        /// An expectation for checking that an element is present on the DOM of a page, visible and selected.
+        /// Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+        /// </summary>
+        /// <param name="by">The locator used to find the element.</param>
+        /// <returns>The <see cref="IWebElement"/> once it is located and visible.</returns>
+        public static Func<IWebDriver, IWebElement> ElementIsSelected(By by) => (driver) =>
+        {
+            try
+            {
+                var element = ElementIfVisible(driver.FindElement(by));
+                return element.Selected ? element : null;
+            }
+            catch (Exception e) when (e is StaleElementReferenceException)
+            {
+                return null;
+            }
+        };
+
+        /// <summary>
+        /// An expectation for checking that all elements are present on the DOM of a page, visible and selected.
+        /// Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+        /// </summary>
+        /// <param name="by">The locator used to find the element.</param>
+        /// <returns>The <see cref="IWebElement"/> once it is located and visible.</returns>
+        public static Func<IWebDriver, ReadOnlyCollection<IWebElement>> SelectedOfAllElementsLocatedBy(By by) => (driver) =>
+        {
+            try
+            {
+                //! pipe: step #1 - find elements
+                var elements = driver.FindElements(by);
+
+                // exit conditions
+                if (!elements.All(i => i.Selected))
+                {
+                    return null;
+                }
+
+                // complete pipe
+                return elements;
+            }
+            catch (Exception e) when (e is StaleElementReferenceException)
             {
                 return null;
             }
@@ -145,10 +201,13 @@ namespace OpenQA.Selenium.Common
                 var elements = driver.FindElements(by);
 
                 // exit conditions
-                if (elements.Any(element => !element.Displayed)) return null;
+                if (!elements.All(i => i.Displayed))
+                {
+                    return null;
+                }
 
                 // complete pipe
-                return elements.Count > 0 ? elements : null;
+                return elements;
             }
             catch (Exception e) when (e is StaleElementReferenceException)
             {
@@ -215,16 +274,25 @@ namespace OpenQA.Selenium.Common
         /// </summary>
         /// <param name="by">The locator used to find the elements.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
-        public static Func<IWebDriver, IWebDriver> InvisibilityOfAllElementsLocatedBy(By by) => (driver) =>
+        public static Func<IWebDriver, ReadOnlyCollection<IWebElement>> InvisibilityOfAllElementsLocatedBy(By by) => (driver) =>
         {
             try
             {
+                //! pipe: step #1 - find elements
                 var elements = driver.FindElements(by);
-                return elements.Any(element => element.Displayed) ? null : driver;
+
+                // exit conditions
+                if (elements.Any(i => i.Displayed))
+                {
+                    return null;
+                }
+
+                // complete pipe
+                return elements;
             }
-            catch (Exception e) when (e is NoSuchElementException || e is StaleElementReferenceException)
+            catch (Exception e) when (e is StaleElementReferenceException)
             {
-                return driver;
+                return null;
             }
         };
 

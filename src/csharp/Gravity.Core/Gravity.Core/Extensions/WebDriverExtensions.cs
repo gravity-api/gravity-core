@@ -9,9 +9,10 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using ExpectedConditions = OpenQA.Selenium.Common.ExpectedConditions;
 
 namespace OpenQA.Selenium.Extensions
 {
@@ -167,7 +168,7 @@ namespace OpenQA.Selenium.Extensions
             return driver;
         }
 
-        #region *** Displayed Element ***
+        #region *** Element: Displayed ***
         /// <summary>
         /// Finds the first visible <see cref="IWebElement"/> using the given method.
         /// </summary>
@@ -175,9 +176,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
-        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
         public static IWebElement GetDisplayedElement(this IWebDriver driver, By by)
         {
             return DoGetDisplayedElement(driver, by, timeout: TimeSpan.FromSeconds(10));
@@ -191,9 +190,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
-        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
         public static IWebElement GetDisplayedElement(this IWebDriver driver, By by, TimeSpan timeout)
         {
             return DoGetDisplayedElement(driver, by, timeout);
@@ -206,9 +203,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
-        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
         public static IEnumerable<IWebElement> GetDisplayedElements(this IWebDriver driver, By by)
         {
             return DoGetDisplayedElements(driver, by, TimeSpan.FromSeconds(10));
@@ -222,9 +217,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
-        /// <exception cref="ElementNotVisibleException">Thrown when an ElementNotVisible error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
         public static IEnumerable<IWebElement> GetDisplayedElements(this IWebDriver driver, By by, TimeSpan timeout)
         {
             return DoGetDisplayedElements(driver, by, timeout);
@@ -233,24 +226,27 @@ namespace OpenQA.Selenium.Extensions
         // execute action routine
         private static IWebElement DoGetDisplayedElement(IWebDriver driver, By by, TimeSpan timeout)
         {
-            // wait for elements
-            var elements = Get(driver, by, timeout);
-
-            // return the displayed element
-            return elements.FirstOrDefault(e => e.Displayed) ?? throw new ElementNotVisibleException();
+            return ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d => ExpectedConditions.ElementIsVisible(by).Invoke(d));
         }
 
         private static IEnumerable<IWebElement> DoGetDisplayedElements(IWebDriver driver, By by, TimeSpan timeout)
         {
-            // wait for elements
-            var elements = Get(driver, by, timeout);
-
-            // return the displayed element
-            return elements.Where(e => e.Displayed) ?? Array.Empty<IWebElement>();
+            try
+            {
+                return ExtensionsUtilities
+                    .WebDriverWait(driver, timeout)
+                    .Until(d => ExpectedConditions.VisibilityOfAllElementsLocatedBy(by).Invoke(d));
+            }
+            catch (Exception e) when (e != null)
+            {
+                return Array.Empty<IWebElement>();
+            }
         }
         #endregion
 
-        #region *** Exists Element    ***
+        #region *** Element: Exists    ***
         /// <summary>
         /// Finds the first exists <see cref="IWebElement"/> using the given method.
         /// </summary>
@@ -258,8 +254,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found.</exception>
         public static IWebElement GetElement(this IWebDriver driver, By by)
         {
             return DoGetElement(driver, by, TimeSpan.FromSeconds(10));
@@ -273,8 +268,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found.</exception>
         public static IWebElement GetElement(this IWebDriver driver, By by, TimeSpan timeout)
         {
             return DoGetElement(driver, by, timeout);
@@ -287,11 +281,10 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found.</exception>
         public static IEnumerable<IWebElement> GetElements(this IWebDriver driver, By by)
         {
-            return Get(driver, by, TimeSpan.FromSeconds(10));
+            return DoGetElements(driver, by, TimeSpan.FromSeconds(10));
         }
 
         /// <summary>
@@ -302,21 +295,188 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
         /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
-        /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or illegal values.</exception>
-        /// <exception cref="NoSuchElementException">Thrown when a NoSuchElement error condition occurs.</exception>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found.</exception>
         public static IEnumerable<IWebElement> GetElements(this IWebDriver driver, By by, TimeSpan timeout)
         {
-            return Get(driver, by, timeout);
+            return DoGetElements(driver, by, timeout);
         }
 
         // execute action routine
         private static IWebElement DoGetElement(IWebDriver driver, By by, TimeSpan timeout)
         {
-            // wait for elements
-            var elements = Get(driver, by, timeout);
+            return ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d => ExpectedConditions.ElementExists(by).Invoke(d));
+        }
 
-            // return the displayed element
-            return elements.FirstOrDefault() ?? throw new NoSuchElementException();
+        private static IEnumerable<IWebElement> DoGetElements(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            try
+            {
+                return ExtensionsUtilities
+                    .WebDriverWait(driver, timeout)
+                    .Until(d => ExpectedConditions.PresenceOfAllElementsLocatedBy(by).Invoke(d));
+            }
+            catch (Exception e) when (e != null)
+            {
+                return Array.Empty<IWebElement>();
+            }
+        }
+        #endregion
+
+        #region *** Element: Enabled   ***
+        /// <summary>
+        /// Finds the first enabled <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        public static IWebElement GetEnabledElement(this IWebDriver driver, By by)
+        {
+            return DoGetEnabledElement(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds the first enabled <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        public static IWebElement GetEnabledElement(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetEnabledElement(driver, by, timeout);
+        }
+
+        /// <summary>
+        /// Finds all enabled <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        public static IEnumerable<IWebElement> GetEnabledElements(this IWebDriver driver, By by)
+        {
+            return DoGetEnabledElements(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds all enabled <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        public static IEnumerable<IWebElement> GetEnabledElements(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetEnabledElements(driver, by, timeout);
+        }
+
+        // execute action routine
+        private static IWebElement DoGetEnabledElement(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d => ExpectedConditions.ElementToBeClickable(by).Invoke(d));
+        }
+
+        private static IEnumerable<IWebElement> DoGetEnabledElements(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            try
+            {
+                return ExtensionsUtilities
+                    .WebDriverWait(driver, timeout)
+                    .Until(d => ExpectedConditions.EnabilityOfAllElementsLocatedBy(by).Invoke(d));
+            }
+            catch (Exception e) when (e != null)
+            {
+                return Array.Empty<IWebElement>();
+            }
+        }
+        #endregion
+
+        #region *** Element: Selected  ***
+        /// <summary>
+        /// Finds the first enabled <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        public static IWebElement GetSelectedElement(this IWebDriver driver, By by)
+        {
+            return DoGetSelectedElement(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds the first enabled <see cref="IWebElement"/> using the given method.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        public static IWebElement GetSelectedElement(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetSelectedElement(driver, by, timeout);
+        }
+
+        /// <summary>
+        /// Finds all enabled <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        public static IEnumerable<IWebElement> GetSelectedElements(this IWebDriver driver, By by)
+        {
+            return DoGetSelectedElements(driver, by, TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Finds all enabled <see cref="IWebElement"/> within the current context using the given mechanism.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>The first visible matching <see cref="IWebElement"/> on the current context.</returns>
+        /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        /// <exception cref="WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        public static IEnumerable<IWebElement> GetSelectedElements(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return DoGetSelectedElements(driver, by, timeout);
+        }
+
+        // execute action routine
+        private static IWebElement DoGetSelectedElement(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d => ExpectedConditions.ElementToBeClickable(by).Invoke(d));
+        }
+
+        private static IEnumerable<IWebElement> DoGetSelectedElements(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            try
+            {
+                return ExtensionsUtilities
+                    .WebDriverWait(driver, timeout)
+                    .Until(d => ExpectedConditions.EnabilityOfAllElementsLocatedBy(by).Invoke(d));
+            }
+            catch (Exception e) when (e != null)
+            {
+                return Array.Empty<IWebElement>();
+            }
         }
         #endregion
 
@@ -519,7 +679,7 @@ namespace OpenQA.Selenium.Extensions
 
         #region *** Persistent Click  ***
         /// <summary>
-        /// Persistently attempts to find and click on the given element, until successful 
+        /// Persistently attempts to find and click on the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -532,7 +692,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// Persistently attempts to find and click on the given element, until successful 
+        /// Persistently attempts to find and click on the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -569,7 +729,7 @@ namespace OpenQA.Selenium.Extensions
 
         #region *** Persistent Keys   ***
         /// <summary>
-        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// Persistently attempts to find and send keys to the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -584,7 +744,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// Persistently attempts to find and send keys to the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -600,7 +760,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// Persistently attempts to find and send keys to the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -614,7 +774,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// Persistently attempts to find and send keys to the given element, until successful 
+        /// Persistently attempts to find and send keys to the given element, until successful
         /// or until no exceptions has been thrown.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
@@ -756,30 +916,6 @@ namespace OpenQA.Selenium.Extensions
 
             // keep the fluent
             return driver;
-        }
-
-        // Utilities
-        // gets exists elements from the DOM
-        private static IEnumerable<IWebElement> Get(IWebDriver driver, By by, TimeSpan timeout)
-        {
-            // wait for elements - replace with code
-            var elements = ExtensionsUtilities
-                .WebDriverWait(driver, timeout)
-                .Until(d =>
-                {
-                    try
-                    {
-                        var e = d.FindElements(by);
-                        return e.Count > 0 ? e : null;
-                    }
-                    catch (Exception e) when (e is StaleElementReferenceException)
-                    {
-                        return null;
-                    }
-                });
-
-            // if no elements
-            return elements.Count == 0 ? throw new NoSuchElementException() : elements;
         }
     }
 }

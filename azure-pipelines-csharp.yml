@@ -6,7 +6,11 @@ pool:
   name: Default
 
 variables:
-  buildConfiguration: 'Release'
+- group: browserstack.com
+- name: 'Build.Configuration'
+  value: 'Release'
+- name: 'Parallel.Workers'
+  value: '10'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -23,15 +27,41 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- powershell: |
+   # read test settings
+   [xml]$runSettings = Get-Content azure_settings_mstest.runsettings
+   #
+   # setup
+   $workers = $runSettings.SelectSingleNode("//MSTest//Workers")
+   #
+   # override with production settings
+   $workers.InnerText = '$(Parallel.Workers)'
+   #
+   # save settings
+   $runSettings.Save("azure_settings_mstest_prod.runsettings")
+  displayName: create test settings > override with production parameters
 
 - task: DotNetCoreCLI@2
-  displayName: execute automated testing
+  displayName: execute unit testing
   inputs:
     command: 'test'
-    projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-    testRunTitle: 'Automation Testing --- $(Build.BuildNumber)'
+    projects: '**/*[Uu]nit*[Tt]ests/*.csproj'
+    arguments: '--configuration $(Build.Configuration) -s azure_settings_mstest_prod.runsettings'
+    testRunTitle: 'Unit Testing --- $(Build.BuildNumber)'
+
+- task: DotNetCoreCLI@2
+  displayName: execute integration testing
+  inputs:
+    command: 'test'
+    projects: '**/*[Ii]ntegration*[Tt]ests/*.csproj'
+    arguments: '--configuration $(Build.Configuration) -s azure_settings_mstest_prod.runsettings'
+    testRunTitle: 'Integration Testing --- $(Build.BuildNumber)'
+
+- powershell: |
+   Remove-Item azure_settings_mstest_prod.runsettings
+  displayName: cleanup
 
 - task: DotNetCoreCLI@2
   displayName: create package
@@ -40,12 +70,3 @@ steps:
     packagesToPack: '**/!(*[Tt]ests)/*.csproj'
     versioningScheme: 'byBuildNumber'
     verbosityPack: 'Diagnostic'
-    packDirectory: $(Build.ArtifactStagingDirectory)
-
-- task: NuGetCommand@2
-  displayName: push package
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'nuget.org'
