@@ -27,7 +27,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+    arguments: '--configuration $(Build.Configuration)'
 
 - powershell: |
    # read test settings
