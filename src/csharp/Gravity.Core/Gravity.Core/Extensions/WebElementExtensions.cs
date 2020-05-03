@@ -3,14 +3,17 @@
  * 
  * on-line resources
  */
+using Newtonsoft.Json;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -21,6 +24,8 @@ namespace OpenQA.Selenium.Extensions
     /// </summary>
     public static class WebElementExtensions
     {
+        private static readonly HttpClient client = new HttpClient();
+
         /// <summary>
         /// Provides a mechanism for building advanced interactions with the browser.
         /// </summary>
@@ -118,30 +123,7 @@ namespace OpenQA.Selenium.Extensions
         /// <returns>The underline element id.</returns>
         public static string Id(this IWebElement element)
         {
-            // local
-            static Type GetRemoteWebElement(Type type)
-            {
-                if (!typeof(RemoteWebElement).IsAssignableFrom(type))
-                {
-                    return type;
-                }
-
-                while (type != typeof(RemoteWebElement))
-                {
-                    type = type.BaseType;
-                }
-
-                return type;
-            }
-
-            // setup
-            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
-
-            // get RemoteWebElement type
-            var remoteWebElement = GetRemoteWebElement(element.GetType());
-
-            // get element id
-            return remoteWebElement.GetProperty(name: "Id", Flags).GetValue(element).ToString();
+            return GetElementId(element);
         }
 
         #region *** Download Resource ***
@@ -498,6 +480,68 @@ namespace OpenQA.Selenium.Extensions
         }
         #endregion
 
+        #region *** Send Command      ***
+        /// <summary>
+        /// Sends POST command directly to this <see cref="IWebDriver"/> instance.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement"/> instance.</param>
+        /// <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+        /// <param name="data">Post data to send (parameters list).</param>
+        /// <returns>Command response as JSON (if available).</returns>
+        public static string SendPostCommand(this IWebElement element, string route, IDictionary<string, object> data)
+        {
+            // setup
+            var content = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(content, Encoding.UTF8, mediaType: "application/json");
+            var command = GetCommandApi(element, route);
+
+            // command
+            var response = client
+                .PostAsync(requestUri: command, content: stringContent)
+                .GetAwaiter()
+                .GetResult();
+
+            // results
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Sends GET command directly to this <see cref="IWebDriver"/> instance.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement"/> instance.</param>
+        /// <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+        /// <returns>Command response as JSON (if available).</returns>
+        public static string SendGetCommand(this IWebElement element, string route)
+        {
+            // setup
+            var command = GetCommandApi(element, route);
+
+            // command
+            var response = client
+                .GetAsync(requestUri: command)
+                .GetAwaiter()
+                .GetResult();
+
+            // results
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        private static string GetCommandApi(IWebElement element, string route)
+        {
+            // setup: get driver
+            var driver = ((IWrapsDriver)element).WrappedDriver;
+
+            // setup: command
+            var endpoint = driver.GetEndpoint().AbsoluteUri;
+            var session = driver.GetSession();
+            var elementId = GetElementId(element);
+            route = route.StartsWith("/") ? route : $"/{route}";
+
+            // result
+            return $"{endpoint}session/{session}/element/{elementId}{route}";
+        }
+        #endregion
+
         #region *** Utilities         ***
         // gets and actions instance from IWebElement
         private static Actions GetActionsFromElement(IWebElement element)
@@ -507,6 +551,35 @@ namespace OpenQA.Selenium.Extensions
 
             // create new actions instance
             return new Actions(driver);
+        }
+
+        // gets the underline element id
+        private static string GetElementId(IWebElement element)
+        {
+            // local
+            static Type GetRemoteWebElement(Type type)
+            {
+                if (!typeof(RemoteWebElement).IsAssignableFrom(type))
+                {
+                    return type;
+                }
+
+                while (type != typeof(RemoteWebElement))
+                {
+                    type = type.BaseType;
+                }
+
+                return type;
+            }
+
+            // setup
+            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+            // get RemoteWebElement type
+            var remoteWebElement = GetRemoteWebElement(element.GetType());
+
+            // get element id
+            return remoteWebElement.GetProperty(name: "Id", Flags).GetValue(element).ToString();
         }
         #endregion
     }
