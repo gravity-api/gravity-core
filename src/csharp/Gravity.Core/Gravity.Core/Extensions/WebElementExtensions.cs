@@ -5,10 +5,12 @@
  */
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -107,6 +109,39 @@ namespace OpenQA.Selenium.Extensions
             {
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Gets the underline element id of this <see cref="IWebElement"/> instance.
+        /// </summary>
+        /// <param name="element">This <see cref="IWebElement"/> instance.</param>
+        /// <returns>The underline element id.</returns>
+        public static string Id(this IWebElement element)
+        {
+            // local
+            static Type GetRemoteWebElement(Type type)
+            {
+                if (!typeof(RemoteWebElement).IsAssignableFrom(type))
+                {
+                    return type;
+                }
+
+                while (type != typeof(RemoteWebElement))
+                {
+                    type = type.BaseType;
+                }
+
+                return type;
+            }
+
+            // setup
+            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+            // get RemoteWebElement type
+            var remoteWebElement = GetRemoteWebElement(element.GetType());
+
+            // get element id
+            return remoteWebElement.GetProperty(name: "Id", Flags).GetValue(element).ToString();
         }
 
         #region *** Download Resource ***
@@ -377,7 +412,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// The <see cref="JavaScriptScrollTop(IWebElement, int)"/> property sets the number of pixels 
+        /// The <see cref="JavaScriptScrollTop(IWebElement, int)"/> property sets the number of pixels
         /// an element's content is scrolled vertically.
         /// </summary>
         /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
@@ -390,7 +425,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// The <see cref="JavaScriptScrollLeft(IWebElement, int)"/> property sets the number of pixels 
+        /// The <see cref="JavaScriptScrollLeft(IWebElement, int)"/> property sets the number of pixels
         /// an element's content is scrolled horizontally.
         /// </summary>
         /// <param name="element">This <see cref="IWebElement">IWebElement</see> instance.</param>
