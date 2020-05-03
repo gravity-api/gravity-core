@@ -9,6 +9,8 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -138,13 +140,14 @@ namespace OpenQA.Selenium.Extensions
             return driver;
         }
 
+        #region ***  Driver: Close     ***
         /// <summary>
         /// An <see cref="IWebDriver"/> extension method that closes a window by the given window index.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
         /// <param name="index">Zero-based index of the window.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
-        public static IWebDriver CloseWindow(this IWebDriver driver, int index)
+        public static IWebDriver Close(this IWebDriver driver, int index)
         {
             // if index is out of bound, take no action
             if (index > (driver.WindowHandles.Count - 1))
@@ -167,6 +170,38 @@ namespace OpenQA.Selenium.Extensions
             // keep the fluent
             return driver;
         }
+
+        /// <summary>
+        /// An <see cref="IWebDriver"/> extension method that closes a window by the given window index.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
+        /// <param name="windowName">The name of the window to select.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
+        public static IWebDriver Close(this IWebDriver driver, string windowName)
+        {
+            // if no window, take no action
+            var isWindowName = driver
+                .WindowHandles
+                .Any(i => i.Equals(windowName, StringComparison.OrdinalIgnoreCase));
+            if (!isWindowName)
+            {
+                return driver;
+            }
+
+            // setup
+            var mainWindow = driver.WindowHandles[0];
+
+            // action routine: close > switch back to main window
+            driver.SwitchTo().Window(windowName).Close();
+            if (driver.WindowHandles?.Count > 0)
+            {
+                driver.SwitchTo().Window(windowName: mainWindow);
+            }
+
+            // keep the fluent
+            return driver;
+        }
+        #endregion
 
         #region *** Element: Displayed ***
         /// <summary>
@@ -917,5 +952,51 @@ namespace OpenQA.Selenium.Extensions
             // keep the fluent
             return driver;
         }
+
+        /// <summary>
+        /// Gets this <see cref="IWebDriver"/> endpoint.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <returns><see cref="IWebDriver"/> endpoint.</returns>
+        public static Uri GetEndpoint(this IWebDriver driver)
+        {
+            return DoGetEndpoint(driver);
+        }
+
+        #region *** Utilities         ***
+        private static Uri DoGetEndpoint(IWebDriver driver)
+        {
+            // local
+            static Type GetRemoteWebDriver(Type type)
+            {
+                if (!typeof(RemoteWebDriver).IsAssignableFrom(type))
+                {
+                    return type;
+                }
+
+                while (type != typeof(RemoteWebDriver))
+                {
+                    type = type.BaseType;
+                }
+
+                return type;
+            }
+
+            // setup
+            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+            // get RemoteWebDriver type
+            var remoteWebDriver = GetRemoteWebDriver(driver.GetType());
+
+            // get this instance executor > get this instance internalExecutor
+            var executor = remoteWebDriver.GetField("executor", Flags).GetValue(driver) as ICommandExecutor;
+
+            // get URL
+            var endpoint = executor.GetType().GetField("remoteServerUri", Flags).GetValue(executor) as Uri;
+
+            // result
+            return endpoint ?? executor.GetType().GetField("URL", Flags).GetValue(executor) as Uri;
+        }
+        #endregion
     }
 }
