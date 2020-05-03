@@ -11,9 +11,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Gravity-API Community</Authors>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
   </ItemGroup>
 </Project>

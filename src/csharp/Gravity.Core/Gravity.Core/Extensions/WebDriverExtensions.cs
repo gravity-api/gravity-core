@@ -3,6 +3,7 @@
  * 
  * on-line resources
  */
+using Newtonsoft.Json;
 using OpenQA.Selenium.Common;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
@@ -10,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +26,8 @@ namespace OpenQA.Selenium.Extensions
     /// </summary>
     public static class WebDriverExtensions
     {
+        private static readonly HttpClient client = new HttpClient();
+
         #region *** Click Listener    ***
         /// <summary>
         /// An <see cref="IWebDriver"/> extension method that listens to elements using the provided <see cref="By"/>
@@ -581,11 +586,7 @@ namespace OpenQA.Selenium.Extensions
         /// <returns>Opaque handle to this window that uniquely identifies it within this driver instance.</returns>
         public static SessionId GetSession(this IWebDriver driver)
         {
-            if (driver is IHasSessionId id)
-            {
-                return id.SessionId;
-            }
-            return new SessionId($"gravity-{Guid.NewGuid()}");
+            return DoGetSession(driver);
         }
 
         /// <summary>
@@ -963,6 +964,82 @@ namespace OpenQA.Selenium.Extensions
             return DoGetEndpoint(driver);
         }
 
+        #region *** Send Command      ***
+        /// <summary>
+        /// Sends POST command directly to this <see cref="IWebDriver"/> instance.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+        /// <param name="data">Post data to send (parameters list).</param>
+        /// <returns>Command response as JSON (if available).</returns>
+        public static string SendPostCommand(this IWebDriver driver, string route, IDictionary<string, object> data)
+        {
+            // setup
+            var content = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(content, Encoding.UTF8, mediaType: "application/json");
+            var command = GetCommandApi(driver, route);
+
+            // command
+            var response = client
+                .PostAsync(requestUri: command, content: stringContent)
+                .GetAwaiter()
+                .GetResult();
+
+            // results
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Sends GET command directly to this <see cref="IWebDriver"/> instance.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+        /// <returns>Command response as JSON (if available).</returns>
+        public static string SendGetCommand(this IWebDriver driver, string route)
+        {
+            // setup
+            var command = GetCommandApi(driver, route);
+
+            // command
+            var response = client
+                .GetAsync(requestUri: command)
+                .GetAwaiter()
+                .GetResult();
+
+            // results
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Sends DELETE command directly to this <see cref="IWebDriver"/> instance.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+        /// <returns>Command response as JSON (if available).</returns>
+        public static string SendDeleteCommand(this IWebDriver driver, string route)
+        {
+            // setup
+            var command = GetCommandApi(driver, route);
+
+            // command
+            var response = client
+                .DeleteAsync(requestUri: command)
+                .GetAwaiter()
+                .GetResult();
+
+            // results
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        private static string GetCommandApi(IWebDriver driver, string route)
+        {
+            var endpoint = DoGetEndpoint(driver).AbsoluteUri;
+            var session = DoGetSession(driver);
+            route = route.StartsWith("/") ? route : $"/{route}";
+            return $"{endpoint}session/{session}{route}";
+        }
+        #endregion
+
         #region *** Utilities         ***
         private static Uri DoGetEndpoint(IWebDriver driver)
         {
@@ -996,6 +1073,15 @@ namespace OpenQA.Selenium.Extensions
 
             // result
             return endpoint ?? executor.GetType().GetField("URL", Flags).GetValue(executor) as Uri;
+        }
+
+        private static SessionId DoGetSession(IWebDriver driver)
+        {
+            if (driver is IHasSessionId id)
+            {
+                return id.SessionId;
+            }
+            return new SessionId($"gravity-{Guid.NewGuid()}");
         }
         #endregion
     }
