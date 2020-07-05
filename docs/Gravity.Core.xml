@@ -1,0 +1,805 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gravity.Core</name>
+    </assembly>
+    <members>
+        <member name="T:OpenQA.Selenium.Common.ExpectedConditions">
+            <summary>
+            Supplies a set of common conditions that can be waited when using <see cref="T:OpenQA.Selenium.Support.UI.WebDriverWait"/>.
+            </summary>
+            <example>
+                <code>
+                    IWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3))
+                    IWebElement element = wait.Until(ExpectedConditions.ElementExists(By.Id("element_id")));
+                </code>
+            </example>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.PresenceOfAllElementsLocatedBy(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that all elements present on the web page that
+            match the locator.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The list of <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.ElementExists(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that an element is present on the DOM of a page.
+            This does not necessarily mean that the element is visible.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.AlertIsPresent">
+            <summary>
+            An expectation for checking if alert is present on this session.
+            </summary>
+            <returns>An <see cref="T:OpenQA.Selenium.IAlert"/> to manipulate JavaScrpt alerts.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.EnabilityOfAllElementsLocatedBy(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that all elements present on the web page that
+            match the locator are visible and enabled. Visibility means that the elements are not
+            only displayed but also have a height and width that is greater than 0.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The list of <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and visible.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.FrameToBeAvailableAndSwitchToIt(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking whether the given frame is available to switch to.
+            If the frame is available it switches the given driver to the specified frame.
+            </summary>
+            <param name="by">Locator for the Frame</param>
+            <returns>An <see cref="T:OpenQA.Selenium.IWebDriver"/> to manipulate the browser</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.ElementIsSelected(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that an element is present on the DOM of a page, visible and selected.
+            Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and visible.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.SelectedOfAllElementsLocatedBy(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that all elements are present on the DOM of a page, visible and selected.
+            Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and visible.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.ElementIsVisible(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that an element is present on the DOM of a page and visible.
+            Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and visible.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.VisibilityOfAllElementsLocatedBy(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that all elements present on the web page that match the locator are visible.
+            Visibility means that the elements are not only displayed but also have a height and width that is greater than 0.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The list of <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and visible.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.InvisibilityOfElementLocated(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that an element is either invisible or not present on the DOM.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns><see cref="!:true"/> if the element is not displayed; otherwise, <see cref="!:false"/>.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.ElementToBeClickable(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking if an element is visible and enabled such that you can click it.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> once it is located and click-able (visible and enabled).</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.UrlMatches(System.String)">
+            <summary>
+            An expectation for the URL of the current page to be a specific URL.
+            </summary>
+            <param name="regex">The regular expression that the URL should match.</param>
+            <returns><see cref="!:true"/> if the URL matches the specified regular expression; otherwise, <see cref="!:false"/>.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.InvisibilityOfAllElementsLocatedBy(OpenQA.Selenium.By)">
+            <summary>
+            An expectation for checking that all elements are either invisible or not present on the DOM.
+            </summary>
+            <param name="by">The locator used to find the elements.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.AttributeMatches(OpenQA.Selenium.By,System.String,System.String)">
+            <summary>
+            An expectation for the given element's attribute to match a pattern.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <param name="attribute">The attribute name to assert against the pattern.</param>
+            <param name="regex">The regular expression that the attribute should match.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.TextMatches(OpenQA.Selenium.By,System.String)">
+            <summary>
+            An expectation for the given element's text to match a pattern.
+            </summary>
+            <param name="by">The locator used to find the element.</param>
+            <param name="regex">The regular expression that the attribute should match.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExpectedConditions.PageHasBeenLoaded">
+            <summary>
+            An expectation for the current page status to be 'completed'.
+            </summary>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(OpenQA.Selenium.IWebDriver,System.TimeSpan)">
+            <summary>
+            Gets an instance of <see cref="T:OpenQA.Selenium.Support.UI.IWait`1"/> with default ignore list
+            of <see cref="T:OpenQA.Selenium.StaleElementReferenceException"/> and <see cref="T:OpenQA.Selenium.NoSuchElementException"/>
+            </summary>
+            <param name="driver">The WebDriver instance used to wait.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns><see cref="T:OpenQA.Selenium.Support.UI.IWait`1"/> implementation which provides the ability to wait for an arbitrary condition during test execution.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(OpenQA.Selenium.IWebDriver,System.TimeSpan,System.Type[])">
+            <summary>
+            Gets an instance of <see cref="T:OpenQA.Selenium.Support.UI.IWait`1"/> with default ignore list
+            of <see cref="T:OpenQA.Selenium.StaleElementReferenceException"/> and <see cref="T:OpenQA.Selenium.NoSuchElementException"/>
+            </summary>
+            <param name="driver">The WebDriver instance used to wait.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <param name="exceptionTypes">The types of exceptions to ignore.</param>
+            <returns><see cref="T:OpenQA.Selenium.Support.UI.IWait`1"/> implementation which provides the ability to wait for an arbitrary condition during test execution.</returns>
+        </member>
+        <member name="T:OpenQA.Selenium.Extensions.WebDriverExtensions">
+            <summary>
+            A collection of <see cref="T:OpenQA.Selenium.IWebDriver" /> extensions.
+            </summary>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.ClickListener(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that listens to elements using the provided <see cref="T:OpenQA.Selenium.By"/>
+            mechanism. When found, the listener will <see cref="M:OpenQA.Selenium.IWebElement.Click"/> on all elements.
+            </summary>
+            <param name="d">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The mechanism by which to find elements within a document.</param>
+            <remarks>The listener will stop when the driver is disposed or after 10min.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.ClickListener(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that listens to elements using the provided <see cref="T:OpenQA.Selenium.By"/>
+            mechanism. When found, the listener will <see cref="M:OpenQA.Selenium.IWebElement.Click"/> on all elements.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The mechanism by which to find elements within a document.</param>
+            <param name="interval">The interval between search ticks. Using a low interval time can reduce performance.</param>
+            <remarks>The listener will stop when the driver is disposed or after 10min.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.ClickListener(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that listens to elements using the provided <see cref="T:OpenQA.Selenium.By"/>
+            mechanism. When found, the listener will <see cref="M:OpenQA.Selenium.IWebElement.Click"/> on all elements.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The mechanism by which to find elements within a document.</param>
+            <param name="interval">The interval between search ticks. Using a low interval time can reduce performance.</param>
+            <param name="timeout">Timeout of this listener expiration.</param>
+            <remarks>The listener will stop when the driver is disposed or when timeout reached.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.CloseAllChildWindows(OpenQA.Selenium.IWebDriver)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that closes all child windows of this session.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.Close(OpenQA.Selenium.IWebDriver,System.Int32)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that closes a window by the given window index.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="index">Zero-based index of the window.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.Close(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            An <see cref="T:OpenQA.Selenium.IWebDriver"/> extension method that closes a window by the given window index.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="windowName">The name of the window to select.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetDisplayedElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds the first visible <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetDisplayedElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds the first visible <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetDisplayedElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds all visible <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetDisplayedElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds all visible <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not displayed.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds the first exists <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds the first exists <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds all exists <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds all exists <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetEnabledElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds the first enabled <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetEnabledElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds the first enabled <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetEnabledElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds all enabled <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetEnabledElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds all enabled <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not clickable.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetSelectedElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds the first enabled <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetSelectedElement(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds the first enabled <see cref="T:OpenQA.Selenium.IWebElement"/> using the given method.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetSelectedElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Finds all enabled <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetSelectedElements(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Finds all enabled <see cref="T:OpenQA.Selenium.IWebElement"/> within the current context using the given mechanism.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>The first visible matching <see cref="T:OpenQA.Selenium.IWebElement"/> on the current context.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+            <exception cref="T:OpenQA.Selenium.WebDriverTimeoutException">Thrown when element was not found or not selected.</exception>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetCurrentHandle(OpenQA.Selenium.IWebDriver)">
+            <summary>
+            Gets the current windows handle, if not implemented or not possible,
+            returns <see cref="T:OpenQA.Selenium.Remote.SessionId"/> or new <see cref="T:OpenQA.Selenium.Remote.SessionId"/> if <see cref="T:OpenQA.Selenium.Remote.IHasSessionId"/> is not implemented.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <returns>Opaque handle to this window that uniquely identifies it within this driver instance.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetScreenshot(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            Saves the screenshot to a file, overwriting the file if it already exists.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="fileName">The full path and file name to save the screenshot to.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetSession(OpenQA.Selenium.IWebDriver)">
+            <summary>
+            Gets this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance <see cref="T:OpenQA.Selenium.Remote.SessionId"/>. If there is no
+            <see cref="T:OpenQA.Selenium.Remote.SessionId"/> for this driver, a new one will be created.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <returns>Opaque handle to this window that uniquely identifies it within this driver instance.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.HasAlert(OpenQA.Selenium.IWebDriver)">
+            <summary>
+            Determines whether this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance has alert.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <returns><see cref="!:true"/> if the specified driver has alert; otherwise, <see cref="!:false"/>.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.NavigateToUrl(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            Calling the <see cref="M:OpenQA.Selenium.Extensions.WebDriverExtensions.NavigateToUrl(OpenQA.Selenium.IWebDriver,System.String)"/> method will load a new web page
+            in the current browser window. This is done using an HTTP GET operation, and the method
+            will block until the load is complete.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="url">The URL to load. It is best to use a fully qualified URL.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.NavigateToUrl(OpenQA.Selenium.IWebDriver,System.String,System.TimeSpan)">
+            <summary>
+            Calling the <see cref="M:OpenQA.Selenium.Extensions.WebDriverExtensions.NavigateToUrl(OpenQA.Selenium.IWebDriver,System.String,System.TimeSpan)"/> method will load a new web page
+            in the current browser window. This is done using an HTTP GET operation, and the method
+            will block until the load is complete.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="url">The URL to load. It is best to use a fully qualified URL.</param>
+            <param name="timeout"></param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.ScrollBrowserWindow(OpenQA.Selenium.IWebDriver,System.Int32)">
+            <summary>
+            Scrolls the current browser window by the given scroll amount.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="scrollLength">Length of the scroll.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentClick(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            Persistently attempts to find and click on the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentClick(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Persistently attempts to find and click on the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentSendKeys(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.String,System.Boolean)">
+            <summary>
+            Persistently attempts to find and send keys to the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="text">The keys to send.</param>
+            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentSendKeys(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.String,System.Boolean,System.TimeSpan)">
+            <summary>
+            Persistently attempts to find and send keys to the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="text">The keys to send.</param>
+            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentSendKeys(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.String)">
+            <summary>
+            Persistently attempts to find and send keys to the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="text">The keys to send.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.PersistentSendKeys(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.String,System.TimeSpan)">
+            <summary>
+            Persistently attempts to find and send keys to the given element, until successful
+            or until no exceptions has been thrown.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
+            <param name="by">The locating mechanism to use.</param>
+            <param name="text">The keys to send.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SubmitForm(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            Submits a web form (everything under <form></form> tag).
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="id">The form identifier ('id' attribute).</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver"/>.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SubmitForm(OpenQA.Selenium.IWebDriver,System.Int32)">
+            <summary>
+            Submits a web form (everything under <form></form> tag).
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="index">Zero-based index of the form in the page DOM.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver"/>.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SwitchToFrame(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By)">
+            <summary>
+            If the frame is available it switches the given driver to the specified frame.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="by">A mechanism by which to find elements within a document.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SwitchToFrame(OpenQA.Selenium.IWebDriver,OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            If the frame is available it switches the given driver to the specified frame.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="by">A mechanism by which to find elements within a document.</param>
+            <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+            <remarks>If not provided, the default timeout is 10 seconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SwitchToWindow(OpenQA.Selenium.IWebDriver,System.Int32)">
+            <summary>
+            Switches the focus of future commands for this driver to the window with the given index.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="index">The window index.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.GetEndpoint(OpenQA.Selenium.IWebDriver)">
+            <summary>
+            Gets this <see cref="T:OpenQA.Selenium.IWebDriver"/> endpoint.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <returns><see cref="T:OpenQA.Selenium.IWebDriver"/> endpoint.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SendPostCommand(OpenQA.Selenium.IWebDriver,System.String,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Sends POST command directly to this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+            <param name="data">Post data to send (parameters list).</param>
+            <returns>Command response as JSON (if available).</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SendGetCommand(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            Sends GET command directly to this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+            <returns>Command response as JSON (if available).</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.SendDeleteCommand(OpenQA.Selenium.IWebDriver,System.String)">
+            <summary>
+            Sends DELETE command directly to this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.
+            </summary>
+            <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.</param>
+            <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+            <returns>Command response as JSON (if available).</returns>
+        </member>
+        <member name="T:OpenQA.Selenium.Extensions.WebElementExtensions">
+            <summary>
+            A collection of <see cref="T:OpenQA.Selenium.IWebElement" /> extensions.
+            </summary>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.Actions(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Provides a mechanism for building advanced interactions with the browser.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement" /> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.Interactions.Actions" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.ClickAndHold(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Clicks and holds the mouse button down on the specified element.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> on which to click and hold.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.Interactions.Actions" />.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:OpenQA.Selenium.Extensions.WebElementExtensions.AsComboBox(OpenQA.Selenium.IWebElement)" -->
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.ContextClick(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Right-click the mouse at the last known mouse coordinates.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> on which to click.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.Interactions.Actions" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DoubleClick(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Double-clicks the mouse on the specified element.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> on which to double-click.</param>
+            <returns>A self-reference to this <see cref="M:OpenQA.Selenium.Extensions.WebElementExtensions.Actions(OpenQA.Selenium.IWebElement)" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.IsStale(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Gets a value indicating if this <see cref="T:OpenQA.Selenium.IWebElement"/> is stale (not attached to the DOM).
+            </summary>
+            <param name="element">The element.</param>
+            <returns><see cref="!:true"/> if element is stale; <see cref="!:false"/> if not.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.Id(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Gets the underline element id of this <see cref="T:OpenQA.Selenium.IWebElement"/> instance.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement"/> instance.</param>
+            <returns>The underline element id.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DownloadResource(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>
+            Download a resource based on the given <see cref="T:OpenQA.Selenium.IWebElement" />.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement" /> to use when downloading a resource.</param>
+            <param name="path">The path on which the resource will be saved.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DownloadResource(OpenQA.Selenium.IWebElement,System.String,System.String)">
+            <summary>
+            Download a resource based on the given <see cref="T:OpenQA.Selenium.IWebElement" />.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement" /> to use when downloading a resource.</param>
+            <param name="path">The path on which the resource will be saved.</param>
+            <param name="attribute">The element attribute from which to extract resource URL (if needed).</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.GetSource(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Get the element's HTML and all it's content, including the start tag, it's attributes, and the end tag.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> from which to get the outer HTML.</param>
+            <returns>The HTML element and all it's content, including the start tag, it's attributes, and the end tag.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.GetValue(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Gets the value property of the value attribute of a text field.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> from which to get the outer HTML.</param>
+            <returns>The value property of the value attribute of a text field.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.MoveToElement(OpenQA.Selenium.IWebElement,System.Int32,System.Int32)">
+            <summary>
+            Moves the mouse to the specified offset of the top-left corner of the specified element.
+            </summary>
+            <param name="toElement">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which to move the mouse.</param>
+            <param name="offsetX">The horizontal offset to which to move the mouse.</param>
+            <param name="offsetY">The vertical offset to which to move the mouse.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:OpenQA.Selenium.Extensions.WebElementExtensions.MoveToElement(OpenQA.Selenium.IWebElement)" -->
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DelayedSendKeys(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>
+            Sends keys to a given Text-Container object with delay between keys. Used
+            for slow typing in order to trigger JS events.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
+            <param name="text">The keys to send.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DelayedSendKeys(OpenQA.Selenium.IWebElement,System.String,System.Boolean)">
+            <summary>
+            Sends keys to a given Text-Container object with delay between keys. Used
+            for slow typing in order to trigger JS events.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
+            <param name="text">The keys to send.</param>
+            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DelayedSendKeys(OpenQA.Selenium.IWebElement,System.String,System.Int32)">
+            <summary>
+            Sends keys to a given Text-Container object with delay between keys. Used
+            for slow typing in order to trigger JS events.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
+            <param name="text">The keys to send.</param>
+            <param name="delay">The delay time between each key.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DelayedSendKeys(OpenQA.Selenium.IWebElement,System.String,System.Int32,System.Boolean)">
+            <summary>
+            Sends keys to a given Text-Container object with delay between keys. Used
+            for slow typing in order to trigger JS events.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
+            <param name="text">The keys to send.</param>
+            <param name="delay">The delay time between each key.</param>
+            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptClear(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Attempts to clear the given data from the text container. This method will not throw an exception.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptClick(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Attempts to click on the given element. Use when element cannot be clicked otherwise.
+            This method will not throw an exception.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptFocus(OpenQA.Selenium.IWebElement)">
+            <summary>
+            The <see cref="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptFocus(OpenQA.Selenium.IWebElement)"/> method is used to give focus to an element (if it can be focused).
+            This method will not throw an exception.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptBlur(OpenQA.Selenium.IWebElement)">
+            <summary>
+            The <see cref="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptBlur(OpenQA.Selenium.IWebElement)"/> method is used to remove focus from an element.
+            This method will not throw an exception.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptScrollTop(OpenQA.Selenium.IWebElement,System.Int32)">
+            <summary>
+            The <see cref="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptScrollTop(OpenQA.Selenium.IWebElement,System.Int32)"/> property sets the number of pixels
+            an element's content is scrolled vertically.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <param name="scrollTop">The number of pixels an element's content is scrolled vertically.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptScrollLeft(OpenQA.Selenium.IWebElement,System.Int32)">
+            <summary>
+            The <see cref="M:OpenQA.Selenium.Extensions.WebElementExtensions.JavaScriptScrollLeft(OpenQA.Selenium.IWebElement,System.Int32)"/> property sets the number of pixels
+            an element's content is scrolled horizontally.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <param name="scrollLeft">The number of pixels an element's content is scrolled horizontally.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+            <remarks>Works only on Web/Mobile Web platforms.</remarks>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.UploadFile(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>
+            Allows to set input of file type element with file to upload (bypass all native windows).
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement">IWebElement</see> instance.</param>
+            <param name="path">The file to upload.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.SendPostCommand(OpenQA.Selenium.IWebElement,System.String,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Sends POST command directly to this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement"/> instance.</param>
+            <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+            <param name="data">Post data to send (parameters list).</param>
+            <returns>Command response as JSON (if available).</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.SendGetCommand(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>
+            Sends GET command directly to this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance.
+            </summary>
+            <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement"/> instance.</param>
+            <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
+            <returns>Command response as JSON (if available).</returns>
+        </member>
+    </members>
+</doc>
