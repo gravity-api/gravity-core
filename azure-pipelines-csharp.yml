@@ -70,6 +70,7 @@ steps:
     packagesToPack: '**/!(*[Tt]ests)/*.csproj'
     versioningScheme: 'byBuildNumber'
     verbosityPack: 'Diagnostic'
+    packDirectory: $(Build.ArtifactStagingDirectory)
 
 - task: NuGetCommand@2
   displayName: push package
