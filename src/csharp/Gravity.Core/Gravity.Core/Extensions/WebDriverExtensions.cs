@@ -9,6 +9,7 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -593,7 +594,7 @@ namespace OpenQA.Selenium.Extensions
         /// Determines whether this <see cref="IWebDriver"/> instance has alert.
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
-        /// <returns><see cref="true"/> if the specified driver has alert; otherwise, <see cref="false"/>.</returns>
+        /// <returns>True if the specified driver has alert; otherwise, False.</returns>
         public static bool HasAlert(this IWebDriver driver)
         {
             try
@@ -673,7 +674,7 @@ namespace OpenQA.Selenium.Extensions
         private static bool IsMobileDriver(IWebDriver driver)
         {
             // get base web-driver
-            if (!(driver is RemoteWebDriver remoteWebDriver))
+            if (driver is not RemoteWebDriver remoteWebDriver)
             {
                 return false;
             }
@@ -685,7 +686,7 @@ namespace OpenQA.Selenium.Extensions
             }
 
             // check capabilities
-            if (!(remoteWebDriver.Capabilities[CapabilityType.PlatformName] is string platformName))
+            if (remoteWebDriver.Capabilities[CapabilityType.PlatformName] is not string platformName)
             {
                 return false;
             }
@@ -771,7 +772,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
         /// <param name="by">The locating mechanism to use.</param>
         /// <param name="text">The keys to send.</param>
-        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <param name="clear">If set to True will clear the text before sending new text.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
         public static IWebDriver PersistentSendKeys(this IWebDriver driver, By by, string text, bool clear)
@@ -786,7 +787,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="driver">This <see cref="IWebDriver" /> instance.</param>
         /// <param name="by">The locating mechanism to use.</param>
         /// <param name="text">The keys to send.</param>
-        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <param name="clear">If set to True will clear the text before sending new text.</param>
         /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver" />.</returns>
         /// <remarks>If not provided, the default timeout is 10 seconds.</remarks>
@@ -1041,6 +1042,7 @@ namespace OpenQA.Selenium.Extensions
         #endregion
 
         #region *** Utilities         ***
+        [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Designed to increase accessibility.")]
         private static Uri DoGetEndpoint(IWebDriver driver)
         {
             // local

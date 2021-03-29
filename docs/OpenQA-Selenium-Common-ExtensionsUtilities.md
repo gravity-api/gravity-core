@@ -6,5 +6,5 @@ internal static class ExtensionsUtilities
 ```
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; ExtensionsUtilities  
 ### Methods
-- [WebDriverWait(IWebDriver, System.TimeSpan)](./OpenQA-Selenium-Common-ExtensionsUtilities-WebDriverWait(IWebDriver_System-TimeSpan).md 'OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(IWebDriver, System.TimeSpan)')
-- [WebDriverWait(IWebDriver, System.TimeSpan, System.Type[])](./OpenQA-Selenium-Common-ExtensionsUtilities-WebDriverWait(IWebDriver_System-TimeSpan_System-Type--).md 'OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(IWebDriver, System.TimeSpan, System.Type[])')
+- [WebDriverWait(OpenQA.Selenium.IWebDriver, System.TimeSpan)](./OpenQA-Selenium-Common-ExtensionsUtilities-WebDriverWait(OpenQA-Selenium-IWebDriver_System-TimeSpan).md 'OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(OpenQA.Selenium.IWebDriver, System.TimeSpan)')
+- [WebDriverWait(OpenQA.Selenium.IWebDriver, System.TimeSpan, System.Type[])](./OpenQA-Selenium-Common-ExtensionsUtilities-WebDriverWait(OpenQA-Selenium-IWebDriver_System-TimeSpan_System-Type--).md 'OpenQA.Selenium.Common.ExtensionsUtilities.WebDriverWait(OpenQA.Selenium.IWebDriver, System.TimeSpan, System.Type[])')

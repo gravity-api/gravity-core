@@ -3,7 +3,7 @@
 ## ExpectedConditions.UrlMatches(string) Method
 An expectation for the URL of the current page to be a specific URL.  
 ```csharp
-public static System.Func<IWebDriver,bool> UrlMatches(string regex);
+public static System.Func<OpenQA.Selenium.IWebDriver,bool> UrlMatches(string regex);
 ```
 #### Parameters
 <a name='OpenQA-Selenium-Common-ExpectedConditions-UrlMatches(string)-regex'></a>
@@ -12,4 +12,4 @@ The regular expression that the URL should match.
   
 #### Returns
 [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[OpenQA.Selenium.IWebDriver](https://docs.microsoft.com/en-us/dotnet/api/OpenQA.Selenium.IWebDriver 'OpenQA.Selenium.IWebDriver')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  
-[true](https://docs.microsoft.com/en-us/dotnet/api/true 'true') if the URL matches the specified regular expression; otherwise, [false](https://docs.microsoft.com/en-us/dotnet/api/false 'false').  
+True if the URL matches the specified regular expression; otherwise, False.  

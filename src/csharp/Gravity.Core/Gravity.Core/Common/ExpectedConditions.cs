@@ -219,7 +219,7 @@ namespace OpenQA.Selenium.Common
         /// An expectation for checking that an element is either invisible or not present on the DOM.
         /// </summary>
         /// <param name="by">The locator used to find the element.</param>
-        /// <returns><see cref="true"/> if the element is not displayed; otherwise, <see cref="false"/>.</returns>
+        /// <returns>True if the element is not displayed; otherwise, False.</returns>
         public static Func<IWebDriver, bool> InvisibilityOfElementLocated(By by) => (driver) =>
         {
             try
@@ -265,7 +265,7 @@ namespace OpenQA.Selenium.Common
         /// An expectation for the URL of the current page to be a specific URL.
         /// </summary>
         /// <param name="regex">The regular expression that the URL should match.</param>
-        /// <returns><see cref="true"/> if the URL matches the specified regular expression; otherwise, <see cref="false"/>.</returns>
+        /// <returns>True if the URL matches the specified regular expression; otherwise, False.</returns>
         public static Func<IWebDriver, bool> UrlMatches(string regex)
             => (driver) => Regex.IsMatch(driver.Url, regex, RegexOptions.IgnoreCase);
 
@@ -349,7 +349,7 @@ namespace OpenQA.Selenium.Common
             const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
             // handler: avoid invalid web driver implementations
-            if (driver.GetType().Name.IndexOf("APPIUM", Compare) >= 0)
+            if (driver.GetType().Name.Contains("APPIUM", Compare))
             {
                 return driver;
             }

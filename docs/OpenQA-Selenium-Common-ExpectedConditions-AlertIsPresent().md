@@ -3,7 +3,7 @@
 ## ExpectedConditions.AlertIsPresent() Method
 An expectation for checking if alert is present on this session.  
 ```csharp
-public static System.Func<IWebDriver,IAlert> AlertIsPresent();
+public static System.Func<OpenQA.Selenium.IWebDriver,OpenQA.Selenium.IAlert> AlertIsPresent();
 ```
 #### Returns
 [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[OpenQA.Selenium.IWebDriver](https://docs.microsoft.com/en-us/dotnet/api/OpenQA.Selenium.IWebDriver 'OpenQA.Selenium.IWebDriver')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[OpenQA.Selenium.IAlert](https://docs.microsoft.com/en-us/dotnet/api/OpenQA.Selenium.IAlert 'OpenQA.Selenium.IAlert')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  

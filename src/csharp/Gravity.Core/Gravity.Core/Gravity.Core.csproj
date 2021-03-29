@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>OpenQA.Selenium</RootNamespace>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <PackageId>Gravity.Core</PackageId>
     <Title>Gravity Core - Selenium Extension Package</Title>
@@ -23,10 +23,10 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PackageReference Include="DefaultDocumentation" Version="0.6.7">
+    <PackageReference Include="DefaultDocumentation" Version="0.6.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup> 
+  </ItemGroup>
   -->
 </Project>

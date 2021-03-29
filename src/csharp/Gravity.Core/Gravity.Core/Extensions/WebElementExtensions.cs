@@ -10,6 +10,7 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -59,7 +60,7 @@ namespace OpenQA.Selenium.Extensions
         /// </summary>
         /// <param name="element">The <see cref="IWebElement"/> from which to create <see cref="SelectElement" />.</param>
         /// <returns>New instance of <see cref="SelectElement" />.</returns>
-        /// <exception cref="UnexpectedTagNameException">Thrown when the element wrapped is not a <select> element.</exception>
+        /// <exception cref="UnexpectedTagNameException"/>
         public static SelectElement AsComboBox(this IWebElement element)
         {
             return new SelectElement(element);
@@ -103,7 +104,7 @@ namespace OpenQA.Selenium.Extensions
         /// Gets a value indicating if this <see cref="IWebElement"/> is stale (not attached to the DOM).
         /// </summary>
         /// <param name="element">The element.</param>
-        /// <returns><see cref="true"/> if element is stale; <see cref="false"/> if not.</returns>
+        /// <returns>True if element is stale; False if not.</returns>
         public static bool IsStale(this IWebElement element)
         {
             try
@@ -159,10 +160,10 @@ namespace OpenQA.Selenium.Extensions
                 : element.GetAttribute(attribute);
 
             // download resource
-            using (var client = new HttpClient())
+            using (var httpClient = new HttpClient())
             {
                 // get response for the current resource
-                var httpResponseMessage = client.GetAsync(resource).GetAwaiter().GetResult();
+                var httpResponseMessage = httpClient.GetAsync(resource).GetAwaiter().GetResult();
 
                 // exit condition
                 if (!httpResponseMessage.IsSuccessStatusCode) return element;
@@ -249,7 +250,6 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// <summary>
         /// Moves the mouse to the specified offset of the top-left corner of the specified element.
         /// </summary>
         /// <param name="toElement">The <see cref="IWebElement"/> to which to move the mouse.</param>
@@ -287,7 +287,7 @@ namespace OpenQA.Selenium.Extensions
         /// </summary>
         /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
         /// <param name="text">The keys to send.</param>
-        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <param name="clear">If set to True will clear the text before sending new text.</param>
         /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
         /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
         public static IWebElement DelayedSendKeys(this IWebElement element, string text, bool clear)
@@ -316,7 +316,7 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="element">The <see cref="IWebElement"/> to which send keys.</param>
         /// <param name="text">The keys to send.</param>
         /// <param name="delay">The delay time between each key.</param>
-        /// <param name="clear">If set to <see cref="true"/> will clear the text before sending new text.</param>
+        /// <param name="clear">If set to True will clear the text before sending new text.</param>
         /// <returns>A self-reference to this <see cref="IWebElement" />.</returns>
         /// <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
         public static IWebElement DelayedSendKeys(this IWebElement element, string text, int delay, bool clear)
@@ -542,6 +542,81 @@ namespace OpenQA.Selenium.Extensions
         }
         #endregion
 
+        #region *** Select Element    ***
+        /// <summary>
+        /// Select the option by the index, as determined by the "index" attribute of the
+        /// element.
+        /// </summary>
+        /// <param name="selectElement">This <see cref="SelectElement"/>.</param>
+        /// <param name="index">The value of the index attribute of the option to be selected.</param>
+        public static void JsSelectByIndex(this SelectElement selectElement, int index)
+        {
+            // constants
+            var script = $"options[{index}].selected = true;";
+
+            // web element to act on
+            var onElement = selectElement.WrappedElement;
+            var onDriver = (IWrapsDriver)onElement;
+
+            // execute
+            ((IJavaScriptExecutor)onDriver).ExecuteScript(script, onElement);
+        }
+
+        /// <summary>
+        /// Select all options by the text displayed.
+        /// </summary>
+        /// <param name="selectElement">This <see cref="SelectElement"/>.</param>
+        /// <param name="text">The text of the option to be selected.</param>
+        public static void JsSelectByText(this SelectElement selectElement, string text)
+        {
+            // constants
+            var script =
+                "var options = arguments[0].getElementsByTagName(\"option\");" +
+                "" +
+                "for(i = 0; i < options.length; i++) {" +
+                $"   if(options[i].innerText !== \"{text}\") {{" +
+                "       continue;" +
+                "    }" +
+                "    options[i].selected = true;" +
+                "    break;" +
+                "}";
+
+            // web element to act on
+            var onElement = selectElement.WrappedElement;
+            var onDriver = (IWrapsDriver)onElement;
+
+            // execute
+            ((IJavaScriptExecutor)onDriver).ExecuteScript(script, onElement);
+        }
+
+        /// <summary>
+        /// Select an option by the value.
+        /// </summary>
+        /// <param name="selectElement"></param>
+        /// <param name="value">The value of the option to be selected.</param>
+        public static void JsSelectByValue(this SelectElement selectElement, string value)
+        {
+            // constants
+            var script =
+                "var options = arguments[0].getElementsByTagName(\"option\");" +
+                "" +
+                "for(i = 0; i < options.length; i++) {" +
+                $"   if(options[i].getAttribute(\"value\") !== \"{value}\") {{" +
+                "       continue;" +
+                "    }" +
+                "    options[i].selected = true;" +
+                "    break;" +
+                "}";
+
+            // web element to act on
+            var onElement = selectElement.WrappedElement;
+            var onDriver = (IWrapsDriver)onElement;
+
+            // execute
+            ((IJavaScriptExecutor)onDriver).ExecuteScript(script, onElement);
+        }
+        #endregion
+
         #region *** Utilities         ***
         // gets and actions instance from IWebElement
         private static Actions GetActionsFromElement(IWebElement element)
@@ -554,6 +629,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         // gets the underline element id
+        [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Designed to increase accessibility")]
         private static string GetElementId(IWebElement element)
         {
             // local

@@ -91,7 +91,7 @@
             An expectation for checking that an element is either invisible or not present on the DOM.
             </summary>
             <param name="by">The locator used to find the element.</param>
-            <returns><see cref="!:true"/> if the element is not displayed; otherwise, <see cref="!:false"/>.</returns>
+            <returns>True if the element is not displayed; otherwise, False.</returns>
         </member>
         <member name="M:OpenQA.Selenium.Common.ExpectedConditions.ElementToBeClickable(OpenQA.Selenium.By)">
             <summary>
@@ -105,7 +105,7 @@
             An expectation for the URL of the current page to be a specific URL.
             </summary>
             <param name="regex">The regular expression that the URL should match.</param>
-            <returns><see cref="!:true"/> if the URL matches the specified regular expression; otherwise, <see cref="!:false"/>.</returns>
+            <returns>True if the URL matches the specified regular expression; otherwise, False.</returns>
         </member>
         <member name="M:OpenQA.Selenium.Common.ExpectedConditions.InvisibilityOfAllElementsLocatedBy(OpenQA.Selenium.By)">
             <summary>
@@ -411,7 +411,7 @@
             Determines whether this <see cref="T:OpenQA.Selenium.IWebDriver"/> instance has alert.
             </summary>
             <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
-            <returns><see cref="!:true"/> if the specified driver has alert; otherwise, <see cref="!:false"/>.</returns>
+            <returns>True if the specified driver has alert; otherwise, False.</returns>
         </member>
         <member name="M:OpenQA.Selenium.Extensions.WebDriverExtensions.NavigateToUrl(OpenQA.Selenium.IWebDriver,System.String)">
             <summary>
@@ -471,7 +471,7 @@
             <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
             <param name="by">The locating mechanism to use.</param>
             <param name="text">The keys to send.</param>
-            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <param name="clear">If set to True will clear the text before sending new text.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
             <remarks>If not provided, the default timeout is 10 seconds.</remarks>
         </member>
@@ -483,7 +483,7 @@
             <param name="driver">This <see cref="T:OpenQA.Selenium.IWebDriver" /> instance.</param>
             <param name="by">The locating mechanism to use.</param>
             <param name="text">The keys to send.</param>
-            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <param name="clear">If set to True will clear the text before sending new text.</param>
             <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebDriver" />.</returns>
             <remarks>If not provided, the default timeout is 10 seconds.</remarks>
@@ -605,7 +605,15 @@
             <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> on which to click and hold.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.Interactions.Actions" />.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:OpenQA.Selenium.Extensions.WebElementExtensions.AsComboBox(OpenQA.Selenium.IWebElement)" -->
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.AsComboBox(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Provides a convenience method for manipulating selections of options in an HTML
+            select element.
+            </summary>
+            <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> from which to create <see cref="T:OpenQA.Selenium.Support.UI.SelectElement" />.</param>
+            <returns>New instance of <see cref="T:OpenQA.Selenium.Support.UI.SelectElement" />.</returns>
+            <exception cref="T:OpenQA.Selenium.Support.UI.UnexpectedTagNameException"/>
+        </member>
         <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.ContextClick(OpenQA.Selenium.IWebElement)">
             <summary>
             Right-click the mouse at the last known mouse coordinates.
@@ -625,7 +633,7 @@
             Gets a value indicating if this <see cref="T:OpenQA.Selenium.IWebElement"/> is stale (not attached to the DOM).
             </summary>
             <param name="element">The element.</param>
-            <returns><see cref="!:true"/> if element is stale; <see cref="!:false"/> if not.</returns>
+            <returns>True if element is stale; False if not.</returns>
         </member>
         <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.Id(OpenQA.Selenium.IWebElement)">
             <summary>
@@ -676,7 +684,13 @@
             <param name="offsetY">The vertical offset to which to move the mouse.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:OpenQA.Selenium.Extensions.WebElementExtensions.MoveToElement(OpenQA.Selenium.IWebElement)" -->
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.MoveToElement(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Moves the mouse to the specified offset of the top-left corner of the specified element.
+            </summary>
+            <param name="toElement">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which to move the mouse.</param>
+            <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
+        </member>
         <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.DelayedSendKeys(OpenQA.Selenium.IWebElement,System.String)">
             <summary>
             Sends keys to a given Text-Container object with delay between keys. Used
@@ -694,7 +708,7 @@
             </summary>
             <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
             <param name="text">The keys to send.</param>
-            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <param name="clear">If set to True will clear the text before sending new text.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
             <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
         </member>
@@ -717,7 +731,7 @@
             <param name="element">The <see cref="T:OpenQA.Selenium.IWebElement"/> to which send keys.</param>
             <param name="text">The keys to send.</param>
             <param name="delay">The delay time between each key.</param>
-            <param name="clear">If set to <see cref="!:true"/> will clear the text before sending new text.</param>
+            <param name="clear">If set to True will clear the text before sending new text.</param>
             <returns>A self-reference to this <see cref="T:OpenQA.Selenium.IWebElement" />.</returns>
             <remarks>If not provided, the default delay is 100 milliseconds.</remarks>
         </member>
@@ -800,6 +814,28 @@
             <param name="element">This <see cref="T:OpenQA.Selenium.IWebElement"/> instance.</param>
             <param name="route">Command route starting with "/" (use the complete route which comes after session id).</param>
             <returns>Command response as JSON (if available).</returns>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JsSelectByIndex(OpenQA.Selenium.Support.UI.SelectElement,System.Int32)">
+            <summary>
+            Select the option by the index, as determined by the "index" attribute of the
+            element.
+            </summary>
+            <param name="selectElement">This <see cref="T:OpenQA.Selenium.Support.UI.SelectElement"/>.</param>
+            <param name="index">The value of the index attribute of the option to be selected.</param>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JsSelectByText(OpenQA.Selenium.Support.UI.SelectElement,System.String)">
+            <summary>
+            Select all options by the text displayed.
+            </summary>
+            <param name="selectElement">This <see cref="T:OpenQA.Selenium.Support.UI.SelectElement"/>.</param>
+            <param name="text">The text of the option to be selected.</param>
+        </member>
+        <member name="M:OpenQA.Selenium.Extensions.WebElementExtensions.JsSelectByValue(OpenQA.Selenium.Support.UI.SelectElement,System.String)">
+            <summary>
+            Select an option by the value.
+            </summary>
+            <param name="selectElement"></param>
+            <param name="value">The value of the option to be selected.</param>
         </member>
     </members>
 </doc>
