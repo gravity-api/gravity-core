@@ -4,10 +4,12 @@
  * on-line resources
  */
 using Newtonsoft.Json;
+
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -264,6 +266,44 @@ namespace OpenQA.Selenium.Extensions
 
             // keep the fluent
             return toElement;
+        }
+
+        /// <summary>
+        /// Scrolls the specified element into the visible area of the browser window.
+        /// </summary>
+        /// <param name="onElement"><see cref="IWebElement"/> to scroll into view.</param>
+        /// <returns>An <see cref="IWebElement"/> interface through which the user controls elements on the page.</returns>
+        public static IWebElement TryScrollIntoView(this IWebElement onElement)
+        {
+            // exit conditions
+            if (!(onElement is IWrapsDriver))
+            {
+                return onElement;
+            }
+
+            // extract driver
+            var driver = ((IWrapsDriver)onElement).WrappedDriver;
+
+            // try scroll into view
+            try
+            {
+                // check for irrelevant drivers
+                if (driver.IsAppiumDriver())
+                {
+                    new Actions(driver).MoveToElement(onElement).Build().Perform();
+                    return onElement;
+                }
+                else
+                {
+                    ((IJavaScriptExecutor)driver)
+                        .ExecuteScript("arguments[0].scrollIntoView(false);", onElement);
+                }
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore exceptions
+            }
+            return onElement;
         }
         #endregion
 

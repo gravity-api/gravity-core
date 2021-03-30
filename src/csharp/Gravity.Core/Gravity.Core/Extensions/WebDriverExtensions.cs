@@ -4,9 +4,11 @@
  * on-line resources
  */
 using Newtonsoft.Json;
+
 using OpenQA.Selenium.Common;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,6 +17,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -934,6 +937,30 @@ namespace OpenQA.Selenium.Extensions
         }
         #endregion
 
+        #region *** Switch to Window  ***
+        /// <summary>
+        /// Switches the focus of future commands for this driver to the window with the given name.
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="windowName">The handle of the window to select.</param>
+        /// <returns>Self <see cref="IWebDriver"/> reference.</returns>
+        public static IWebDriver SwitchTo(this IWebDriver driver, string windowName)
+        {
+            // commands
+            var command = GetCommandApi(driver, "/window");
+
+            // switch window parameters
+            var body = @"{""handle"":""" + windowName + @"""}";
+            var content = new StringContent(body, Encoding.UTF8, mediaType: "application/json");
+
+            // executes
+            client.PostAsync(command, content).GetAwaiter().GetResult();
+
+            // results
+            return driver;
+        }
+        #endregion
+
         /// <summary>
         /// Switches the focus of future commands for this driver to the window with the given index.
         /// </summary>
@@ -963,6 +990,33 @@ namespace OpenQA.Selenium.Extensions
         public static Uri GetEndpoint(this IWebDriver driver)
         {
             return DoGetEndpoint(driver);
+        }
+
+        /// <summary>
+        /// Returns an indication if this IWebDriver" implementation is an AppiumDriver implementation.
+        /// </summary>
+        /// <param name="d">The IWebDriver to evaluate.</param>
+        /// <returns>True if AppiumDriver or False if not.</returns>
+        public static bool IsAppiumDriver(this IWebDriver d)
+        {
+            // initialize conditions
+            var isName = false;
+            var isAppium = false;
+
+            // setup name condition            
+            var type = d.GetType();
+            while (!isName && type != null && type.Name != "RemoteWebDriver" && type.Name != "Object")
+            {
+                isName = Regex.IsMatch(type.Name, "AppiumDriver`1");
+                if (isName)
+                {
+                    isAppium = typeof(IWebElement).IsAssignableFrom(type?.GenericTypeArguments?.First());
+                }
+                type = type.BaseType;
+            }
+
+            // assertion
+            return isAppium;
         }
 
         #region *** Send Command      ***
@@ -1031,17 +1085,20 @@ namespace OpenQA.Selenium.Extensions
             // results
             return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
-
-        private static string GetCommandApi(IWebDriver driver, string route)
-        {
-            var endpoint = DoGetEndpoint(driver).AbsoluteUri;
-            var session = DoGetSession(driver);
-            route = route.StartsWith("/") ? route : $"/{route}";
-            return $"{endpoint}session/{session}{route}";
-        }
         #endregion
 
         #region *** Utilities         ***
+        private static string GetCommandApi(IWebDriver driver, string route)
+        {
+            // setup
+            var endpoint = DoGetEndpoint(driver).AbsoluteUri;
+            var session = DoGetSession(driver);
+            route = route.StartsWith("/") ? route : $"/{route}";
+
+            // get
+            return $"{endpoint}session/{session}{route}";
+        }
+
         [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Designed to increase accessibility.")]
         private static Uri DoGetEndpoint(IWebDriver driver)
         {
