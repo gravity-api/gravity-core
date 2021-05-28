@@ -26,7 +26,7 @@ namespace OpenQA.Selenium.Extensions
     /// </summary>
     public static class WebDriverExtensions
     {
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new();
 
         #region *** Click Listener    ***
         /// <summary>
@@ -342,13 +342,6 @@ namespace OpenQA.Selenium.Extensions
         }
 
         // execute action routine
-        private static IWebElement DoGetElement(IWebDriver driver, By by, TimeSpan timeout)
-        {
-            return ExtensionsUtilities
-                .WebDriverWait(driver, timeout)
-                .Until(d => ExpectedConditions.ElementExists(by).Invoke(d));
-        }
-
         private static IEnumerable<IWebElement> DoGetElements(IWebDriver driver, By by, TimeSpan timeout)
         {
             try
@@ -673,7 +666,7 @@ namespace OpenQA.Selenium.Extensions
         private static bool IsMobileDriver(IWebDriver driver)
         {
             // get base web-driver
-            if (!(driver is RemoteWebDriver remoteWebDriver))
+            if (driver is not RemoteWebDriver remoteWebDriver)
             {
                 return false;
             }
@@ -685,7 +678,7 @@ namespace OpenQA.Selenium.Extensions
             }
 
             // check capabilities
-            if (!(remoteWebDriver.Capabilities[CapabilityType.PlatformName] is string platformName))
+            if (remoteWebDriver.Capabilities[CapabilityType.PlatformName] is not string platformName)
             {
                 return false;
             }
@@ -873,10 +866,45 @@ namespace OpenQA.Selenium.Extensions
         /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
         /// <param name="index">Zero-based index of the form in the page DOM.</param>
         /// <returns>A self-reference to this <see cref="IWebDriver"/>.</returns>
-        public static object SubmitForm(this IWebDriver driver, int index)
+        public static IWebDriver SubmitForm(this IWebDriver driver, int index)
         {
             // submit the form
             ((IJavaScriptExecutor)(driver)).ExecuteScript($"document.forms[{index}].submit();");
+
+            // keep the fluent
+            return driver;
+        }
+
+        /// <summary>
+        /// Submits a web form (everything under <form></form> tag).
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver"/>.</returns>
+        public static IWebDriver SubmitForm(this IWebDriver driver, By by)
+        {
+            return SubmitFormBy(driver, by, timeout: TimeSpan.FromSeconds(10));
+        }
+
+        /// <summary>
+        /// Submits a web form (everything under <form></form> tag).
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <param name="by">The locating mechanism to use.</param>
+        /// <param name="timeout">The timeout value indicating how long to wait for the condition.</param>
+        /// <returns>A self-reference to this <see cref="IWebDriver"/>.</returns>
+        public static IWebDriver SubmitForm(this IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return SubmitFormBy(driver, by, timeout);
+        }
+
+        public static IWebDriver SubmitFormBy(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            // setup
+            var element = DoGetElement(driver, by, timeout);
+
+            // submit the form
+            ((IJavaScriptExecutor)(driver)).ExecuteScript($"arguments[0].submit();", element);
 
             // keep the fluent
             return driver;
@@ -1082,6 +1110,13 @@ namespace OpenQA.Selenium.Extensions
                 return id.SessionId;
             }
             return new SessionId($"gravity-{Guid.NewGuid()}");
+        }
+
+        private static IWebElement DoGetElement(IWebDriver driver, By by, TimeSpan timeout)
+        {
+            return ExtensionsUtilities
+                .WebDriverWait(driver, timeout)
+                .Until(d => ExpectedConditions.ElementExists(by).Invoke(d));
         }
         #endregion
     }
