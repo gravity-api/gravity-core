@@ -993,6 +993,16 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
+        /// Gets the underline<see cref="ICapabilities"/> of the <see cref="IWebDriver"/> instance. 
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <returns>The underline<see cref="ICapabilities"/>.</returns>
+        public static ICapabilities GetCapabilities(this IWebDriver driver)
+        {
+            return (driver as RemoteWebDriver)?.Capabilities;
+        }
+
+        /// <summary>
         /// Returns an indication if this IWebDriver" implementation is an AppiumDriver implementation.
         /// </summary>
         /// <param name="d">The IWebDriver to evaluate.</param>
@@ -1099,39 +1109,22 @@ namespace OpenQA.Selenium.Extensions
             return $"{endpoint}session/{session}{route}";
         }
 
-        [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Designed to increase accessibility.")]
         private static Uri DoGetEndpoint(IWebDriver driver)
         {
-            // local
-            static Type GetRemoteWebDriver(Type type)
-            {
-                if (!typeof(RemoteWebDriver).IsAssignableFrom(type))
-                {
-                    return type;
-                }
-
-                while (type != typeof(RemoteWebDriver))
-                {
-                    type = type.BaseType;
-                }
-
-                return type;
-            }
-
             // setup
             const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
 
             // get RemoteWebDriver type
-            var remoteWebDriver = GetRemoteWebDriver(driver.GetType());
+            var remoteWebDriver = GetBaseType<RemoteWebDriver>(driver);
 
             // get this instance executor > get this instance internalExecutor
             var executor = remoteWebDriver.GetField("executor", Flags).GetValue(driver) as ICommandExecutor;
 
             // get URL
-            var endpoint = executor.GetType().GetField("remoteServerUri", Flags).GetValue(executor) as Uri;
+            var endpoint = executor.GetType().GetField("service", Flags).GetValue(executor) as DriverService;
 
             // result
-            return endpoint ?? executor.GetType().GetField("URL", Flags).GetValue(executor) as Uri;
+            return endpoint.ServiceUrl;
         }
 
         private static SessionId DoGetSession(IWebDriver driver)
@@ -1141,6 +1134,27 @@ namespace OpenQA.Selenium.Extensions
                 return id.SessionId;
             }
             return new SessionId($"gravity-{Guid.NewGuid()}");
+        }
+
+        private static Type GetBaseType<T>(IWebDriver driver)
+        {
+            // setup
+            var type = driver.GetType();
+            
+            // bad request
+            if (!typeof(T).IsAssignableFrom(type))
+            {
+                return type;
+            }
+
+            // iterate
+            while (type != typeof(T))
+            {
+                type = type.BaseType;
+            }
+
+            // get
+            return type;
         }
         #endregion
     }
