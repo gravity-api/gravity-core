@@ -993,7 +993,7 @@ namespace OpenQA.Selenium.Extensions
         }
 
         /// <summary>
-        /// Gets the underline<see cref="ICapabilities"/> of the <see cref="IWebDriver"/> instance. 
+        /// Gets the underline <see cref="ICapabilities"/> of the <see cref="IWebDriver"/> instance. 
         /// </summary>
         /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
         /// <returns>The underline<see cref="ICapabilities"/>.</returns>
