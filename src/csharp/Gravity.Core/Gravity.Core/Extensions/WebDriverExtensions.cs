@@ -992,6 +992,37 @@ namespace OpenQA.Selenium.Extensions
             return DoGetEndpoint(driver);
         }
 
+        /// <summary>
+        /// Gets the underline<see cref="ICapabilities"/> of the <see cref="IWebDriver"/> instance. 
+        /// </summary>
+        /// <param name="driver">This <see cref="IWebDriver"/> instance.</param>
+        /// <returns>The underline<see cref="ICapabilities"/>.</returns>
+        public static ICapabilities GetCapabilities(this IWebDriver driver)
+        {
+            // local
+            static Type GetRemoteWebDriver(Type type)
+            {
+                if (!typeof(RemoteWebDriver).IsAssignableFrom(type))
+                {
+                    return type;
+                }
+
+                while (type != typeof(RemoteWebDriver))
+                {
+                    type = type.BaseType;
+                }
+
+                return type;
+            }
+
+            // get RemoteWebDriver type
+            var remoteWebDriver = GetRemoteWebDriver(driver.GetType());
+
+            // get
+            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+            return remoteWebDriver.GetField("capabilities", Flags).GetValue(driver) as ICapabilities;
+        }
+
         #region *** Send Command      ***
         /// <summary>
         /// Sends POST command directly to this <see cref="IWebDriver"/> instance.
@@ -1097,10 +1128,10 @@ namespace OpenQA.Selenium.Extensions
             var executor = remoteWebDriver.GetField("executor", Flags).GetValue(driver) as ICommandExecutor;
 
             // get URL
-            var endpoint = executor.GetType().GetField("remoteServerUri", Flags).GetValue(executor) as Uri;
+            var endpoint = executor.GetType().GetField("service", Flags).GetValue(executor) as DriverService;
 
             // result
-            return endpoint ?? executor.GetType().GetField("URL", Flags).GetValue(executor) as Uri;
+            return endpoint.ServiceUrl;
         }
 
         private static SessionId DoGetSession(IWebDriver driver)
