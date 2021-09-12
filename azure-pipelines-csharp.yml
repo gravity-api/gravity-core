@@ -5,6 +5,11 @@ name: Gravity.Core.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 pool:
   name: Default
 
+trigger:
+  branches:
+    include:
+    - master
+
 variables:
 - group: browserstack.com
 - name: 'Build.Configuration'
